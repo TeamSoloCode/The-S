@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#212121</color>
+    <color name="colorPrimaryDark">#424242</color>
+    <color name="colorAccent">#212121</color>
+    <color name="colorControlHighligh">#607D8B</color>
+    <color name="colorButtonNormal">#00E676</color>
+    <!--Toasty's color-->
+    <color name="warning">#FFEB3B</color>
+    <color name="error">#FF5722</color>
+    <color name="information">#00C853</color>
+    <color name="success">#0277BD</color>
+</resources>

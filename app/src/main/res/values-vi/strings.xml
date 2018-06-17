@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hi!WhereAmI?</string>
+    <string name="facebook_app_id">1245433598911871</string>
+    <string name="fb_login_protocol_scheme">1245433598911871</string>
+    <string name="close">Đóng</string>
+    <string name="open">Mở</string>
+    <string name="Email">Email</string>
+    <string name="Password">Mật khẩu</string>
+    <string name="Login">Đăng nhập</string>
+    <string name="Create">Tạo mới</string>
+    <string name="Invite">Mời</string>
+    <string name="Enteremail">Nhập email của bạn bè..</string>
+    <string name="Name">Tên</string>
+    <string name="Birthday">Năm Sinh</string>
+    <string name="Phone">Số điện thoại</string>
+    <string name="Genre">Giới tính</string>
+    <string name="Male">Nam</string>
+    <string name="Female">Nữ</string>
+    <string name="Save">Lưu</string>
+    <string name="Information">Thông tin</string>
+    <string name="EnterComment">Nhập bình luận ...</string>
+    <string name="Direction">Chỉ dường</string>
+    <string name="Oldpassword">Mật khẩu cũ..</string>
+    <string name="NewPassword">Mật khẩu mới..</string>
+    <string name="ConfirmPassword">Xác nhận mật khẩu..</string>
+    <string name="Cancel">Cancel</string>
+    <string name="CreateTeam">Tạo nhóm</string>
+    <string name="ok">ok</string>
+    <string name="rate">Đánh giá</string>
+    <string name="title_activity_big_maps">Bản đồ</string>
+    <string name="Rate">Đánh Giá</string>
+    <string name="MyProfile">Thông tin của tôi</string>
+    <string name="Map">Bản đồ</string>
+    <string name="Logout">Đăng Xuất</string>
+    <string name="Team">Nhóm</string>
+    <string name="ChangeLanguage">Thay đổi ngôn ngữ</string>
+    <string name="Recommended">Đề Xuất cho bạn</string>
+    <string name="Enter_your_Chat_Message">Nhập tin nhắn...</string>
+</resources>

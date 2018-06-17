@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+      <LinearLayout
+          android:orientation="vertical"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+          <ImageView
+              android:id="@+id/imageHistory"
+              android:scaleType="fitXY"
+              android:layout_width="250dp"
+              android:layout_height="150dp"
+              android:src="@drawable/buttoncmt" />
+          <RatingBar
+              android:layout_gravity="center"
+              android:id="@+id/ratingBar_Main"
+              style="@style/RatingBar"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:progressTint="#FFD600"
+              android:rating="3.5" />
+          <TextView
+              android:id="@+id/txtHistoryName"
+              android:layout_marginTop="5dp"
+              android:gravity="center"
+              android:textStyle="bold"
+              android:text="dasdasdasdasdasd"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content" />
+      </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
