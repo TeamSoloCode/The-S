@@ -133,9 +133,9 @@ public class Write_Comment_Activity extends AppCompatActivity {
                    ref.putFile(fipath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                        @Override
                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                           Log.v("successtoast",taskSnapshot.getDownloadUrl().toString());
+                           //Log.v("successtoast",taskSnapshot.getDownloadUrl().toString());
 
-                           mData.child("Img_Comment").child(key).push().setValue(taskSnapshot.getDownloadUrl().toString());
+                           //mData.child("Img_Comment").child(key).push().setValue(taskSnapshot.getDownloadUrl().toString());
                        }
                    }).addOnFailureListener(new OnFailureListener() {
                        @Override
@@ -162,6 +162,7 @@ public class Write_Comment_Activity extends AppCompatActivity {
             }
         });
     }
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

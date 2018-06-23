@@ -455,7 +455,6 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
                 destination = selectedLocation.latitude + ", " + selectedLocation.longitude;
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLocation, 16));
                 sendRequest(origin,destination);
-
                 info.dismiss();
                 drawer.closeDrawer(Gravity.START);
             }

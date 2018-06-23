@@ -1,7 +1,7 @@
 package com.example.bruce.myapp.Model;
 
 import com.example.bruce.myapp.ApiClient;
-import com.example.bruce.myapp.ApiGetObject.TouristLocation.GetTouristLocationDetailById;
+import com.example.bruce.myapp.ApiGetObject.GetTouristLocationDetailById;
 import com.example.bruce.myapp.ApiInterface;
 import com.example.bruce.myapp.Presenter.InformationFragment.IInformationFragment;
 

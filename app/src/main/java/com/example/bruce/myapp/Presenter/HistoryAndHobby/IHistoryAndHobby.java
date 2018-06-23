@@ -1,7 +1,5 @@
 package com.example.bruce.myapp.Presenter.HistoryAndHobby;
 
-import android.widget.ListView;
-
 import com.example.bruce.myapp.Data.Tourist_Location;
 import com.example.bruce.myapp.Data.UserProfile;
 
@@ -21,6 +19,4 @@ public interface IHistoryAndHobby {
     ArrayList<Tourist_Location> GetUserHistoryLocation(ArrayList<Tourist_Location> tourist_locations);
     ArrayList<Tourist_Location> returnRecommendedList(ArrayList<Tourist_Location> tourist_locations);
     void returnLocationNearByList(ArrayList<Tourist_Location> touristLocations);
-    void HasTeam(String[] menuItem,ListView listView);
-    void HasNoTeam(String[] menuItem,ListView listView);
 }

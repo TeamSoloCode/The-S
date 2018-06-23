@@ -1,35 +1,35 @@
 {
   "project_info": {
-    "project_number": "241028830331",
-    "firebase_url": "https://doancoso-752a8.firebaseio.com",
-    "project_id": "doancoso-752a8",
-    "storage_bucket": "doancoso-752a8.appspot.com"
+    "project_number": "456694018002",
+    "firebase_url": "https://fir-hwai.firebaseio.com",
+    "project_id": "firebase-hwai",
+    "storage_bucket": "firebase-hwai.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:241028830331:android:f8f1886745a458e7",
+        "mobilesdk_app_id": "1:456694018002:android:f8f1886745a458e7",
         "android_client_info": {
           "package_name": "com.example.bruce.myapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "241028830331-108tgnp6l83sg2ntjc4g4i1vqg4uelt7.apps.googleusercontent.com",
+          "client_id": "456694018002-rgomjerpo7fc8s2hv4s6ktnqicvlbqlf.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.bruce.myapp",
-            "certificate_hash": "a93ffe1a082d488be56da56cb5d8c18119d95ec9"
+            "package_name": "com.example.bruce.dacs",
+            "certificate_hash": "9abc9dbf69e6b3f701e82a3d0414501c399c0ccf"
           }
         },
         {
-          "client_id": "241028830331-aavvdquvbnp3ut7qietvm2rlolfftlqb.apps.googleusercontent.com",
+          "client_id": "456694018002-gffm4ltfsshmkar7g2hoead45qa2828i.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBj7nY5KbSscnt8EE4mAwEz_wSer1dI38g"
+          "current_key": "AIzaSyCEQ-ZkRZnR8TEtTxkviaNPdoWw_dDJ76A"
         }
       ],
       "services": {
@@ -40,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "241028830331-aavvdquvbnp3ut7qietvm2rlolfftlqb.apps.googleusercontent.com",
+              "client_id": "456694018002-104m2g36qtt593d9hs77ac5n2k8e8i40.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
@@ -50,7 +50,6 @@
         }
       }
     }
-
   ],
   "configuration_version": "1"
 }

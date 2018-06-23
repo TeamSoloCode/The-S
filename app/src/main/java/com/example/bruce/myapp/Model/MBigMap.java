@@ -1,7 +1,7 @@
 package com.example.bruce.myapp.Model;
 
 import com.example.bruce.myapp.ApiClient;
-import com.example.bruce.myapp.ApiGetObject.TouristLocation.GetAllTouristLocation;
+import com.example.bruce.myapp.ApiGetObject.GetAllTouristLocation;
 import com.example.bruce.myapp.ApiInterface;
 import com.example.bruce.myapp.Presenter.BigMap.IBigMap;
 import com.google.android.gms.maps.model.LatLng;

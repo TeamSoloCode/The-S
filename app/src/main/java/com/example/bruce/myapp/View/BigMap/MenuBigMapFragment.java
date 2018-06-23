@@ -18,7 +18,6 @@ public class MenuBigMapFragment extends Fragment{
     View mView;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
     }
 

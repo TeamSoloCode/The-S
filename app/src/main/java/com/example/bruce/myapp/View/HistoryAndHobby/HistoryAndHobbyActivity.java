@@ -1,9 +1,7 @@
 package com.example.bruce.myapp.View.HistoryAndHobby;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -32,22 +30,24 @@ import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.HistoryAdapter;
 import com.example.bruce.myapp.CircleTransform;
+import com.example.bruce.myapp.Data.InvitersInfo;
 import com.example.bruce.myapp.Data.Tourist_Location;
 import com.example.bruce.myapp.Data.UserProfile;
 import com.example.bruce.myapp.GPSTracker;
 import com.example.bruce.myapp.Model.MTeam;
 import com.example.bruce.myapp.Presenter.HistoryAndHobby.PHistoryAndHobby;
 import com.example.bruce.myapp.Presenter.MenuFragment.PMenuFragment;
+import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.BigMap.BigMapsActivity;
 import com.example.bruce.myapp.View.Information_And_Comments.InformationAndCommentsActivity;
 import com.example.bruce.myapp.View.Login.LoginActivity;
 import com.example.bruce.myapp.View.MenuFragment.IViewMenuFragment;
+import com.example.bruce.myapp.View.Team.IViewTeam;
 import com.example.bruce.myapp.View.Team.TeamActivity;
 import com.example.bruce.myapp.View.TeamSupport.TeamSupportActivity;
 import com.example.bruce.myapp.View.User.UserProfileActivity;
 import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -55,17 +55,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import dmax.dialog.SpotsDialog;
 
-public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewHistoryAndHobby,IViewMenuFragment,HistoryAdapter.RecyclerViewClicklistener {
+public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewHistoryAndHobby,IViewMenuFragment,HistoryAdapter.RecyclerViewClicklistener, IViewTeam{
 
     private PHistoryAndHobby presenterHistoryAndHobby = new PHistoryAndHobby(this);
+    private PTeam pTeam = new PTeam(this);
     private PMenuFragment pMenuFragment = new PMenuFragment(this);
 
     ImageView imgFriendProfilePicture;
@@ -102,8 +103,6 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     private GeoFire geoFire;
     String idCaptain,emailCaptain,idUser;
     private DatabaseReference mDataTeamUser;
-    AlertDialog.Builder builder;
-    AlertDialog alertDialog;
     String Language;
 
     MTeam mTeam = new MTeam();
@@ -118,13 +117,13 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
         //loadLanguage();
         //load data dialog
-        loadDaTaDialog=new SpotsDialog(this);
-        loadDaTaDialog.show();
+        //loadDaTaDialog=new SpotsDialog(this);
+        //loadDaTaDialog.show();
 //--------------------------------------------------------------------------------------------------------------------------
         //kiểm tra GPS có bật hay chưa trong Presenter
         presenterHistoryAndHobby.receivedEnableGPS(getApplicationContext(), this);
         //lấy dữ thông tin user từ firebase
-        presenterHistoryAndHobby.receivedGetUserData(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//        presenterHistoryAndHobby.receivedGetUserData(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
 //---------------------------------------------------------------------------------------------------------------------------
         initialize();
@@ -135,38 +134,6 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
         //set up menu
         setUpListViewMenu(listView);
 
-
-        FirebaseDatabase.getInstance().getReference("ListInviting").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).exists())
-                {
-                    //dataSnapshot.getKey()=idUser
-                    //dataSnapshot.getKey()=id Đội Trưởng
-                    idUser=dataSnapshot.getKey();
-                    idCaptain =dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue().toString();
-
-                    FirebaseDatabase.getInstance().getReference("User").child(idCaptain).child("Email").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            emailCaptain=dataSnapshot.getValue().toString();
-                            diaLogInvite();
-                            alertDialog.show();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         Language = Locale.getDefault().getDisplayLanguage().toString(); // lấy ngôn ngữ mặc định
         if(Language.equals("English")){
@@ -239,32 +206,6 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
     }
 
-    private void diaLogInvite() {
-        builder=new AlertDialog.Builder(this);
-        builder.setMessage(emailCaptain+ " mời bạn vào nhóm").setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        mDataTeamUser=FirebaseDatabase.getInstance().getReference("TeamUser");
-                        geoFire=new GeoFire(mDataTeamUser.child(idCaptain).child("member"));
-                        FirebaseDatabase.getInstance().getReference("CheckTeam").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Captain").setValue(idCaptain);
-                        Toast.makeText(HistoryAndHobbyActivity.this, "Chúc mừng bạn đã gia nhập đội của :"+emailCaptain, Toast.LENGTH_SHORT).show();
-                        FirebaseDatabase.getInstance().getReference("ListInviting").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
-                        geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),new GeoLocation(0,0));
-                    }
-                })
-                .setNegativeButton("Later", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-        alertDialog = builder.create();
-        alertDialog.setTitle("Thông báo");
-    }
-
-
     private void interfaceFacebookUser(FirebaseUser user, ImageView imgFriendProfilePicture, TextView txtEmail, TextView txtGreeting){
 
         if (user != null) {
@@ -287,7 +228,8 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     }
 
     private void setUpListViewMenu(final ListView listView){
-        presenterHistoryAndHobby.receivedTeamChecker(user.getUid(),menuItem,listView);
+        //check user has team or not
+        pTeam.receivedHasTeam(user.getUid(), HistoryAndHobbyActivity.this);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -322,16 +264,10 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                     btnOk=dialogCreateTeam.findViewById(R.id.btnOk);
                     btnCancel=dialogCreateTeam.findViewById(R.id.btnCancel);
                     btnOk.setOnClickListener(v -> {
-                        String TeamName=txtTeamName.getText().toString();
-
-                        FirebaseDatabase.getInstance().getReference("CheckTeam").child(user.getUid()).child("Captain").setValue(user.getUid());
-                        FirebaseDatabase.getInstance().getReference("TeamUser").child(user.getUid()).child("TeamName").setValue(TeamName);
-
-
-                        mDataTeamUser=FirebaseDatabase.getInstance().getReference("TeamUser");
-                        geoFire=new GeoFire(mDataTeamUser.child(user.getUid()).child("member"));
-                        geoFire.setLocation(user.getUid(),new GeoLocation(0,0));
-                        dialogCreateTeam.dismiss();
+                        //teams name
+                        String teamName = txtTeamName.getText().toString();
+                        //call post api create team
+                        pTeam.receivedCreateTeam(user.getUid(), teamName);
                     });
                     dialogCreateTeam.show();
                     btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -346,7 +282,6 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     }
 
     private void initialize() {
-
 
         imgFriendProfilePicture = findViewById(R.id.imgUser);
         txtGreeting = findViewById(R.id.txtDisplayName);
@@ -365,6 +300,15 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
         adapter.setClickListenerRecyclerView(this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void createTeam(int resultCode, String resultMessage) {
+        dialogCreateTeam.dismiss();
+        startActivity(getIntent());
+        //chuyen qua man hinh team
+        Intent target = new Intent(HistoryAndHobbyActivity.this, TeamActivity.class);
+        startActivity(target);
     }
 
     @Override
@@ -472,14 +416,13 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     public String GetUserHistory(String history) {
         //lấy dữ liệu các địa điểm
         this.history = history;
-        presenterHistoryAndHobby.receivedGetLocationData( HistoryAndHobbyActivity.this);
+        //presenterHistoryAndHobby.receivedGetLocationData( HistoryAndHobbyActivity.this);
         return null;
 
     }
 
     @Override
     public String getUserBehavior(String behavior) {
-        presenterHistoryAndHobby.receivedRecommendeToUser(behavior,history,allLocation);
         return null;
     }
 
@@ -490,14 +433,14 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
     @Override
     public ArrayList<Tourist_Location> GetLocationData(ArrayList<Tourist_Location> tourist_locations) {
-        loadDaTaDialog.dismiss();
+        //loadDaTaDialog.dismiss();
         //lấy dữ liệu của tất cả các địa điểm để truyền qua activity khác
         allLocation = tourist_locations;
 
 //---------------------------------------------------------------------------------------------------------
-        presenterHistoryAndHobby.receivedGetUserHistoryLocation(history, tourist_locations);
+        //presenterHistoryAndHobby.receivedGetUserHistoryLocation(history, tourist_locations);
         //lấy dữ liệu thông tin hanh vi của user
-        presenterHistoryAndHobby.receivedGetUsetBehavior(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        //presenterHistoryAndHobby.receivedGetUsetBehavior(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         //presenterHistoryAndHobby.receivedLocationNearByList(new LatLng(gps.getLatitude(),gps.getLongtitude()),tourist_locations);
         return null;
@@ -527,11 +470,27 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     }
 
     @Override
-    public void HasTeam(String[] menuItem, ListView listView) {
-        menuItem = new String[]{getString(R.string.MyProfile),
-                getString(R.string.Map),
-                getString(R.string.Logout),
-                getString(R.string.Team)};
+    public void hasTeam(int resultCode, String resultMessage) {
+        String[] menuItem;
+        if(resultCode == 111){
+            menuItem = new String[]{getString(R.string.MyProfile),
+                    getString(R.string.Map),
+                    getString(R.string.Logout),
+                    getString(R.string.Team)};
+        }
+        else if(resultCode == 113){
+            menuItem = new String[]{getString(R.string.MyProfile),
+                    getString(R.string.Map),
+                    getString(R.string.Logout),
+                    getString(R.string.CreateTeam)};
+        }
+        else {
+            menuItem = new String[]{getString(R.string.MyProfile),
+                    getString(R.string.Map),
+                    getString(R.string.Logout)};
+            Toast.makeText(HistoryAndHobbyActivity.this, resultMessage, Toast.LENGTH_SHORT).show();
+        }
+
         ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 menuItem);
@@ -539,17 +498,9 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     }
 
     @Override
-    public void HasNoTeam(String[] menuItem, ListView listView) {
-        menuItem = new String[]{getString(R.string.MyProfile),
-                getString(R.string.Map),
-                getString(R.string.Logout),
-                getString(R.string.CreateTeam)};
-        ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
-                menuItem);
-        listView.setAdapter(listViewAdapter);
-    }
+    public void inviteMember(int resultCode, String resultMessage) {
 
+    }
 
     @Override
     public void onBackPressed() {
@@ -611,6 +562,16 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void getInvitersInfo(int resultCode, List<InvitersInfo> invitersInfo, String resultMessage) {
+
+    }
+
+    @Override
+    public void acceptInvitation(int resultCode, String resultMessage) {
+
     }
 }
 

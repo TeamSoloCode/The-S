@@ -18,9 +18,8 @@ import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.SectionsPageAdapter;
 import com.example.bruce.myapp.ApiClient;
-import com.example.bruce.myapp.ApiCommonRespone.CommonResponse;
+import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
 import com.example.bruce.myapp.ApiInterface;
-import com.example.bruce.myapp.ApiPostObject.PostRating;
 import com.example.bruce.myapp.Data.TouristLocation;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.Comment_Fragment.Comment_Fragment;
@@ -98,12 +97,11 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
      * @param locationId
      */
     private void postUsersRate(String locationId, String userId, float ratingValue, Dialog dialog){
-        PostRating postRating = new PostRating(userId, locationId, ratingValue);
         Retrofit retrofit = ApiClient.getApiClient();
 
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
-        apiInterface.postRating(postRating).enqueue(new Callback<CommonResponse>() {
+        apiInterface.postRating(locationId, userId, ratingValue).enqueue(new Callback<CommonResponse>() {
             @Override
             public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
                 if(response.isSuccessful()){
@@ -180,9 +178,7 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         postUsersRate(tls.get(0).getLocationId(),
-                                FirebaseAuth.getInstance().getCurrentUser().getUid().toString(),
-                                costRate,
-                                dialog);
+                                FirebaseAuth.getInstance().getCurrentUser().getUid().toString(), costRate, dialog);
                     }
                 });
 

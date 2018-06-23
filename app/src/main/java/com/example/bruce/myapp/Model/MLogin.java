@@ -84,18 +84,12 @@ public class MLogin extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-
                             // Sign in success, update UI with the signed-in user's information
                             UserProfile constructerUserProfile = new UserProfile(FirebaseAuth.getInstance().getCurrentUser().getEmail(),FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),FirebaseAuth.getInstance().getCurrentUser().getPhotoUrl().toString(),"2,3,4,5,6");
                             callback.User_Profile(constructerUserProfile);
-
                             callback.LoginFacebookSuccess();
-
-
                         } else {
-
                             callback.LoginFacebookFailed();
-
                         }
                         // ...
                     }

@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -229,14 +228,14 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
 
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                    FirebaseDatabase.getInstance().getReference().child("User").child(firebaseAuth.getCurrentUser().getUid()).child("Image").setValue(downloadUrl.toString());
-                    UserProfileChangeRequest profileChangeRequest=new UserProfileChangeRequest.Builder()
-
-                            .setPhotoUri(Uri.parse(downloadUrl.toString()))
-                            .build();
-                    user.updateProfile(profileChangeRequest);
+//                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+//
+//                    FirebaseDatabase.getInstance().getReference().child("User").child(firebaseAuth.getCurrentUser().getUid()).child("Image").setValue(downloadUrl.toString());
+//                    UserProfileChangeRequest profileChangeRequest=new UserProfileChangeRequest.Builder()
+//
+//                            .setPhotoUri(Uri.parse(downloadUrl.toString()))
+//                            .build();
+//                    user.updateProfile(profileChangeRequest);
 
 
                 }

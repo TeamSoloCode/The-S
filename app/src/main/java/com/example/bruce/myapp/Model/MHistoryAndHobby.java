@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
-import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -236,31 +235,12 @@ public class MHistoryAndHobby {
         callback.returnRecommendedList(returnList);
     }
 
-    public void handleTeamCheker(String idUser, String[] menuItem, ListView listView)
-    {
-        FirebaseDatabase.getInstance().getReference("CheckTeam").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(idUser).exists())
-                {
-                    callback.HasTeam(menuItem,listView);
-                }
-                else {
-                    callback.HasNoTeam(menuItem,listView);
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
     MBigMap bigMap = new MBigMap();
     public void handleLocationNearByList(LatLng myLocation,ArrayList<Tourist_Location> tourist_locations){
 
         for(Tourist_Location tl : tourist_locations){
-            tl.setDistance(bigMap.Radius(myLocation,new LatLng(tl.getLatitude(),tl.getLongtitude())));
+            //tl.setDistance(bigMap.Radius(myLocation,new LatLng(tl.getLatitude(),tl.getLongtitude())));
         }
         Collections.sort(tourist_locations);
         callback.returnLocationNearByList(tourist_locations);

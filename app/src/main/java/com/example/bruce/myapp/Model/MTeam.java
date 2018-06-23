@@ -1,11 +1,14 @@
 package com.example.bruce.myapp.Model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import com.example.bruce.myapp.Adapter.TeamAdapter;
-import com.example.bruce.myapp.Data.UserProfile;
+import com.example.bruce.myapp.ApiClient;
+import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
+import com.example.bruce.myapp.ApiGetObject.GetInvitersInfo;
+import com.example.bruce.myapp.ApiInterface;
 import com.example.bruce.myapp.Presenter.Team.ITeam;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -14,8 +17,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Admin on 01/12/2017.
@@ -31,72 +39,169 @@ public class MTeam {
         this.callback = callback;
     }
 
-    public void handleAddListUser(TeamAdapter adapter,ArrayList<UserProfile> listUser) {
-        FirebaseDatabase.getInstance().getReference("CheckTeam").addListenerForSingleValueEvent(new ValueEventListener() {
+    /**
+     * Người dùng tạo team
+     * @param userId
+     */
+    public void createTeam(String userId, String teamsName){
+
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.postCreateTeam(userId, teamsName).enqueue(new Callback<CommonResponse>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String idCaptain= dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Captain").getValue().toString();
-                FirebaseDatabase.getInstance().getReference("TeamUser").child(idCaptain).child("member")
-                        .addChildEventListener(new ChildEventListener() {
-                            @Override
-                            public void onChildAdded(DataSnapshot dataSnapshot1, String s) {
-                                //dataSnapshot1 đang đứng ở những key  của member
-                                FirebaseDatabase.getInstance().getReference("User").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot dataSnapshot2 : dataSnapshot.getChildren())
-                                        {
-                                            if(dataSnapshot1.getKey().equals(dataSnapshot2.getKey()) && !dataSnapshot1.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) )
-                                            {
-                                                UserProfile constructer_userProfile=dataSnapshot2.getValue(UserProfile.class);
-                                                listUser.add(constructer_userProfile);
-                                                // callback.GetListUser(listUser);
-                                                Log.d("dsad","sad");
-                                                adapter.notifyDataSetChanged();
-//                                    teamAdapter.notifyDataSetChanged();
-
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                            }
-
-                            @Override
-                            public void onChildRemoved(DataSnapshot dataSnapshot1) {
-
-                            }
-
-                            @Override
-                            public void onChildMoved(DataSnapshot dataSnapshot1, String s) {
-
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
+            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                if(response.isSuccessful()){
+                    if(response.body().getResultCode() == 1){
+                        callback.createTeam(1,response.body().getResultData().toString());
+                    }
+                    else if(response.body().getResultCode() == 0){
+                        callback.createTeam(0,response.body().getResultData().toString());
+                    }
+                    else {
+                        callback.createTeam(response.body().getResultCode(), response.body().getResultMessage().toString());
+                    }
+                }
+                else{
+                    callback.createTeam(99, "Không thể kết nối với máy chủ");
+                }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                callback.createTeam(99, "Không thể kết nối với máy chủ");
             }
         });
-
     }
-    public void handleRemoveMember(){
 
+     /**
+     * Kiểm tra trạng thái đội của người dùng
+     * @param userId
+     */
+    public void hasTeam(String userId , Context context){
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.hasTeam(userId).enqueue(new Callback<CommonResponse>() {
+            @Override
+            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                SharedPreferences sharedPref = context.getSharedPreferences("my_data", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                if(response.isSuccessful()){
+                    if(response.body().getResultCode() == 111){
+                        editor.putString("teamId", response.body().getResultData().toString());
+                        editor.apply();
+                        callback.hasTeam(response.body().getResultCode(),response.body().getResultData().toString());
+                    }
+                    else{
+                        callback.hasTeam(response.body().getResultCode(), response.body().getResultData().toString());
+                        editor.putString("teamId", "");
+                        editor.apply();
+                    }
+                }
+                else{
+                    callback.hasTeam(99, "Không thể kết nối với máy chủ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                callback.hasTeam(99, "Không thể kết nối với máy chủ");
+            }
+        });
+    }
+
+    /**
+     * Lây thông tin của người mời mình vào đội
+     * @param userId
+     */
+    public void getInvitersInformation(String userId){
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.inviterInfo(userId).enqueue(new Callback<GetInvitersInfo>() {
+            @Override
+            public void onResponse(Call<GetInvitersInfo> call, retrofit2.Response<GetInvitersInfo> response) {
+                if(response.isSuccessful()){
+                    callback.getInvitersInfo(
+                            response.body().getResultCode(),
+                            response.body().getResultData(),
+                            "");
+                }
+                else{
+                    callback.getInvitersInfo(99, null,"Không thể kết nối với máy chủ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetInvitersInfo> call, Throwable t) {
+                callback.getInvitersInfo(99, null,"Không thể kết nối với máy chủ");
+            }
+        });
+    }
+
+    /**
+     * Mời thành viên vào đội mình tạo
+     * @param userId
+     * @param userInvitedEmail
+     * @param context
+     */
+    public void handleInviteMember(String userId, String userInvitedEmail, Context context){
+
+        SharedPreferences sharedPref = context.getSharedPreferences("my_data", MODE_PRIVATE);
+
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.inviteMember(sharedPref.getString("teamId",""),userId, userInvitedEmail).enqueue(new Callback<CommonResponse>() {
+            @Override
+            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                if(response.isSuccessful()){
+                    callback.inviteMember(response.body().getResultCode(),response.body().getResultData().toString());
+                }
+                else{
+                    callback.inviteMember(99, "Không thể kết nối với máy chủ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                callback.inviteMember(99, "Không thể kết nối với máy chủ");
+            }
+        });
+    }
+
+    /**
+     * Chấp nhận lời mời từ người mời
+     * @param userId
+     * @param teamId
+     */
+    public void handleAcceptTheInvitation(String userId, String teamId){
+
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.acceptTheInvitation(userId, teamId).enqueue(new Callback<CommonResponse>() {
+            @Override
+            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                if(response.isSuccessful()){
+                    callback.acceptInvitation(response.body().getResultCode(),response.body().getResultData().toString());
+                }
+                else{
+                    callback.acceptInvitation(response.body().getResultCode(), response.body().getResultMessage().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                callback.acceptInvitation(99, "Không thể kết nối với máy chủ");
+            }
+        });
     }
 
     public void handlePingToMyTeam(String problemName){
