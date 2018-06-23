@@ -369,7 +369,7 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
             @Override
             public boolean onMarkerClick(Marker marker) {
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(BigMapsActivity.this);
-                View parentView =  getLayoutInflater().inflate(R.layout.adapter_bottom_sheet,null);
+                View parentView =  getLayoutInflater().inflate(R.layout.item_bottom_sheet,null);
                 bottomSheetDialog.setContentView(parentView);
                 BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from((View) parentView.getParent());
                 bottomSheetBehavior.setPeekHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,400, getResources().getDisplayMetrics()));

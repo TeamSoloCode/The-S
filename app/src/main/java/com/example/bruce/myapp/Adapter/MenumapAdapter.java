@@ -35,7 +35,7 @@ public class MenumapAdapter extends RecyclerView.Adapter<MenumapAdapter.ViewHold
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View itemView = layoutInflater.inflate(R.layout.adapter_locations_info,parent,false);
+        View itemView = layoutInflater.inflate(R.layout.item_locations_info,parent,false);
         return new ViewHolder(itemView);
     }
 

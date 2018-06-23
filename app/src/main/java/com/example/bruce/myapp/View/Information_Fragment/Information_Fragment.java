@@ -63,7 +63,7 @@ public class Information_Fragment extends android.support.v4.app.Fragment implem
             return;
         }
         //set up listview
-        moreInfoAdapter = new InfoAdapter(getActivity(), R.layout.adaper_information, detail);
+        moreInfoAdapter = new InfoAdapter(getActivity(), R.layout.item_information, detail);
         listView.setAdapter(moreInfoAdapter);
     }
 }

@@ -14,4 +14,5 @@ public interface IViewTeam {
     void inviteMember(int resultCode, String resultMessage);
     void getInvitersInfo(int resultCode, List<InvitersInfo> invitersInfo, String resultMessage);
     void acceptInvitation(int resultCode, String resultMessage);
+    void isLeader(int resultCode, String resultMessage);
 }

@@ -53,15 +53,7 @@ public class MTeam {
             @Override
             public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
                 if(response.isSuccessful()){
-                    if(response.body().getResultCode() == 1){
-                        callback.createTeam(1,response.body().getResultData().toString());
-                    }
-                    else if(response.body().getResultCode() == 0){
-                        callback.createTeam(0,response.body().getResultData().toString());
-                    }
-                    else {
-                        callback.createTeam(response.body().getResultCode(), response.body().getResultMessage().toString());
-                    }
+                    callback.createTeam(response.body().getResultCode(),response.body().getResultMessage().toString());
                 }
                 else{
                     callback.createTeam(99, "Không thể kết nối với máy chủ");
@@ -91,12 +83,12 @@ public class MTeam {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 if(response.isSuccessful()){
                     if(response.body().getResultCode() == 111){
-                        editor.putString("teamId", response.body().getResultData().toString());
+                        editor.putString("teamId", response.body().getResultMessage().toString());
                         editor.apply();
-                        callback.hasTeam(response.body().getResultCode(),response.body().getResultData().toString());
+                        callback.hasTeam(response.body().getResultCode(),response.body().getResultMessage().toString());
                     }
                     else{
-                        callback.hasTeam(response.body().getResultCode(), response.body().getResultData().toString());
+                        callback.hasTeam(response.body().getResultCode(), response.body().getResultMessage().toString());
                         editor.putString("teamId", "");
                         editor.apply();
                     }
@@ -161,7 +153,7 @@ public class MTeam {
             @Override
             public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
                 if(response.isSuccessful()){
-                    callback.inviteMember(response.body().getResultCode(),response.body().getResultData().toString());
+                    callback.inviteMember(response.body().getResultCode(),response.body().getResultMessage().toString());
                 }
                 else{
                     callback.inviteMember(99, "Không thể kết nối với máy chủ");
@@ -190,10 +182,10 @@ public class MTeam {
             @Override
             public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
                 if(response.isSuccessful()){
-                    callback.acceptInvitation(response.body().getResultCode(),response.body().getResultData().toString());
+                    callback.acceptInvitation(response.body().getResultCode(),response.body().getResultMessage().toString());
                 }
                 else{
-                    callback.acceptInvitation(response.body().getResultCode(), response.body().getResultMessage().toString());
+                    callback.acceptInvitation(99, "Không thể kết nối với máy chủ");
                 }
             }
 
@@ -202,6 +194,40 @@ public class MTeam {
                 callback.acceptInvitation(99, "Không thể kết nối với máy chủ");
             }
         });
+    }
+
+    /**
+     * Kiểm tra user có phải leader hay không
+     * @param teamId
+     * @param userId
+     * @param context
+     */
+    public void handleIsLeader(String teamId, String userId, Context context){
+
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.isLeader(userId, teamId).enqueue(new Callback<CommonResponse>() {
+            @Override
+            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                if(response.isSuccessful()){
+                    callback.acceptInvitation(response.body().getResultCode(),response.body().getResultMessage().toString());
+                }
+                else{
+                    callback.acceptInvitation(99, "Không thể kết nối với máy chủ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                callback.acceptInvitation(99, "Không thể kết nối với máy chủ");
+            }
+        });
+    }
+
+    public void handleGetAllTeamsMember(){
+
     }
 
     public void handlePingToMyTeam(String problemName){

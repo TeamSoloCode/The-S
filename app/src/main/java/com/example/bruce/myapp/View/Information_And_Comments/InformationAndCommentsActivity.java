@@ -30,6 +30,7 @@ import com.hsalf.smilerating.SmileRating;
 
 import java.util.ArrayList;
 
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -105,22 +106,25 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
                 if(response.isSuccessful()){
-                    if(response.body().getResultCode() == 1){
-                        Toast.makeText(getApplicationContext(), response.body().getResultData().toString(), Toast.LENGTH_SHORT);
-                    }
-                    else {
-                        Toast.makeText(getApplicationContext(), response.body().getResultData().toString(), Toast.LENGTH_SHORT);
+                    if(response.body().getResultCode() == 2){
+                        Toasty.success(InformationAndCommentsActivity.this,
+                                response.body().getResultMessage().toString(),
+                                Toast.LENGTH_LONG).show();
                     }
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "Không thể kết nối đến server", Toast.LENGTH_SHORT);
+                    Toasty.error(InformationAndCommentsActivity.this,
+                            "Không thể kết nối đến server",
+                            Toast.LENGTH_LONG).show();
                 }
                 dialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<CommonResponse> call, Throwable t) {
-                Toast.makeText(getApplicationContext(), "Không thể kết nối đến server", Toast.LENGTH_SHORT);
+                Toasty.error(InformationAndCommentsActivity.this,
+                        "Không thể kết nối đến server",
+                        Toast.LENGTH_LONG).show();
             }
         });
     }

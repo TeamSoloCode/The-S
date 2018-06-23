@@ -12,20 +12,12 @@ public class CommonResponse {
     @Expose
     private int resultCode;
 
-    @SerializedName("resultData")
-    @Expose
-    private Object resultData;
-
     @SerializedName("resultMessage")
     @Expose
     private Object resultMessage;
 
     public int getResultCode() {
         return resultCode;
-    }
-
-    public Object getResultData() {
-        return resultData;
     }
 
     public Object getResultMessage() {

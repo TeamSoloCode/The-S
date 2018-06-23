@@ -117,4 +117,22 @@ public interface ApiInterface {
     Call<CommonResponse> acceptTheInvitation(@Field("userId") String userId,
                                              @Field("teamId") String teamId);
 
+
+    /**
+     * Kiểm tra user có phải leader hay không
+     * @param userId
+     * @param teamId
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("IsLeader")
+    Call<CommonResponse> isLeader(@Field("userId") String userId,
+                                  @Field("teamId") String teamId);
+
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("IsLeader")
+    Call<CommonResponse> getAllTeamsMember(@Field("userId") String userId,
+                                            @Field("teamId") String teamId);
 }

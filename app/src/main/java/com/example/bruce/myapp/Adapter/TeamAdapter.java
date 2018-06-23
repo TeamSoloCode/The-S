@@ -2,14 +2,12 @@ package com.example.bruce.myapp.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.bruce.myapp.CircleTransform;
 import com.example.bruce.myapp.Data.UserProfile;
@@ -31,6 +29,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>  {
     ArrayList<UserProfile> listUser=new ArrayList<>();
     Context context;
     RecyclerViewClicklistener itemClickListener;
+
     public TeamAdapter(ArrayList<UserProfile> listUser, Context context) {
         this.listUser = listUser;
         this.context = context;
@@ -39,7 +38,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>  {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater=LayoutInflater.from(parent.getContext());
-        View iteamView=layoutInflater.inflate(R.layout.adapter_team,parent,false);
+        View iteamView=layoutInflater.inflate(R.layout.item_team_member,parent,false);
         return new ViewHolder(iteamView);
     }
 

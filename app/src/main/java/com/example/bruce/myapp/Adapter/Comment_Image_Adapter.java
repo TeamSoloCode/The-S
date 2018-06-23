@@ -31,7 +31,7 @@ public class Comment_Image_Adapter extends RecyclerView.Adapter<Comment_Image_Ad
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View mView = layoutInflater.inflate(R.layout.adapter_comment_image,parent,false);
+        View mView = layoutInflater.inflate(R.layout.item_comment_image,parent,false);
 
         return  new ViewHolder(mView);
     }

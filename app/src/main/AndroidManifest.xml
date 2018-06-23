@@ -68,18 +68,14 @@
         <activity android:name=".View.Team.TeamActivity" />
         <activity android:name=".View.Write_Comment.Write_Comment_Activity" />
         <activity android:name=".View.Register.RegisterActivity" />
-
-
-
-
         <activity
             android:name=".ActivityChat"
             android:label="@string/title_activity_chat"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Phongchat"></activity>
-
+        <activity android:name=".Phongchat" />
         <activity android:name=".View.TeamSupport.TeamSupportActivity" />
-        <activity android:name=".View.TeamChat.TeamChatActivity"></activity>
+        <activity android:name=".View.TeamChat.TeamChatActivity" />
+        <activity android:name=".View.Invitation.ListInvitationActvity"></activity>
     </application>
 
 </manifest>

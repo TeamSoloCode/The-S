@@ -8,6 +8,9 @@ public class InvitersInfo {
     private String invitersName;
     private String invitersEmail;
     private String teamId;
+    private String invitersPhotoURL;
+    private boolean checked;
+    private String teamsName;
 
     public InvitersInfo() {
     }
@@ -22,5 +25,17 @@ public class InvitersInfo {
 
     public String getTeamId() {
         return teamId;
+    }
+
+    public String getInvitersPhotoURL() {
+        return invitersPhotoURL;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public String getTeamsName() {
+        return teamsName;
     }
 }

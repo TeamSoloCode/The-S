@@ -41,6 +41,7 @@ import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.BigMap.BigMapsActivity;
 import com.example.bruce.myapp.View.Information_And_Comments.InformationAndCommentsActivity;
+import com.example.bruce.myapp.View.Invitation.ListInvitationActvity;
 import com.example.bruce.myapp.View.Login.LoginActivity;
 import com.example.bruce.myapp.View.MenuFragment.IViewMenuFragment;
 import com.example.bruce.myapp.View.Team.IViewTeam;
@@ -62,6 +63,7 @@ import java.util.List;
 import java.util.Locale;
 
 import dmax.dialog.SpotsDialog;
+import es.dmoral.toasty.Toasty;
 
 public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewHistoryAndHobby,IViewMenuFragment,HistoryAdapter.RecyclerViewClicklistener, IViewTeam{
 
@@ -239,24 +241,24 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                 {
                     pMenuFragment.receivedLogout();
                 }
-                if(value == getString(R.string.Map)){
+                else if(value == getString(R.string.Map)){
                     Intent target = new Intent(HistoryAndHobbyActivity.this, BigMapsActivity.class);
                     target.putParcelableArrayListExtra("allLocation",allLocation);
                     startActivity(target);
                 }
-                if(value == getString(R.string.MyProfile)){
+                else if(value == getString(R.string.MyProfile)){
                     Intent target = new Intent(HistoryAndHobbyActivity.this, UserProfileActivity.class);
                     ArrayList<UserProfile> listUser=new ArrayList<>();
                     listUser.add(userProfile);
                     target.putParcelableArrayListExtra("user",listUser);
                     startActivity(target);
                 }
-                if(value==getString(R.string.Team))
+                else if(value==getString(R.string.Team))
                 {
                     Intent target = new Intent(HistoryAndHobbyActivity.this, TeamActivity.class);
                     startActivity(target);
                 }
-                if(value==getString(R.string.CreateTeam))
+                else if(value==getString(R.string.CreateTeam))
                 {
                     dialogCreateTeam = new Dialog(HistoryAndHobbyActivity.this);
                     dialogCreateTeam.setContentView(R.layout.dialog_create_team);
@@ -276,6 +278,10 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                             dialogCreateTeam.dismiss();
                         }
                     });
+                }
+                else if(value.equals("Invitation List")){
+                    Intent intent = new Intent(HistoryAndHobbyActivity.this, ListInvitationActvity.class);
+                    startActivity(intent);
                 }
             }
         });
@@ -304,11 +310,16 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
     @Override
     public void createTeam(int resultCode, String resultMessage) {
-        dialogCreateTeam.dismiss();
-        startActivity(getIntent());
-        //chuyen qua man hinh team
-        Intent target = new Intent(HistoryAndHobbyActivity.this, TeamActivity.class);
-        startActivity(target);
+        if(resultCode == 002){
+            dialogCreateTeam.dismiss();
+            Toasty.success(this, resultMessage,Toast.LENGTH_LONG).show();
+            startActivity(getIntent());
+            //chuyen qua man hinh team
+            Intent target = new Intent(HistoryAndHobbyActivity.this, TeamActivity.class);
+            startActivity(target);
+        }else {
+            Toasty.error(this, resultMessage,Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -476,18 +487,21 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
             menuItem = new String[]{getString(R.string.MyProfile),
                     getString(R.string.Map),
                     getString(R.string.Logout),
-                    getString(R.string.Team)};
+                    getString(R.string.Team),
+                    "Invitation List"};
         }
         else if(resultCode == 113){
             menuItem = new String[]{getString(R.string.MyProfile),
                     getString(R.string.Map),
                     getString(R.string.Logout),
-                    getString(R.string.CreateTeam)};
+                    getString(R.string.CreateTeam),
+                    "Invitation List"};
         }
         else {
             menuItem = new String[]{getString(R.string.MyProfile),
                     getString(R.string.Map),
-                    getString(R.string.Logout)};
+                    getString(R.string.Logout),
+                    "Invitation List"};
             Toast.makeText(HistoryAndHobbyActivity.this, resultMessage, Toast.LENGTH_SHORT).show();
         }
 
@@ -571,6 +585,11 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
     @Override
     public void acceptInvitation(int resultCode, String resultMessage) {
+
+    }
+
+    @Override
+    public void isLeader(int resultCode, String resultMessage) {
 
     }
 }

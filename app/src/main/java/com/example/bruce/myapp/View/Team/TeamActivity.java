@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.dmoral.toasty.Toasty;
+
 public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAdapter.RecyclerViewClicklistener{
     RecyclerView recyclerViewTeam;
     PTeam pTeam=new PTeam(this);
@@ -48,7 +49,7 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
         initialize();
-        listUser=new ArrayList<>();
+        listUser = new ArrayList<>();
         recyclerViewTeam.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         teamAdapter = new TeamAdapter(listUser, this);
         recyclerViewTeam.setAdapter(teamAdapter);
@@ -56,43 +57,41 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
 
         //Hiển thị Danh sách User lên recyclerView
         //pTeam.receivedAddListUser(teamAdapter,listUser);
-
         //Get invitation realtime
-        FirebaseDatabase.getInstance().getReference("Invitation").child(user.getUid())
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        pTeam.receivedGetInviterinformation(user.getUid());
-                    }
+//        FirebaseDatabase.getInstance().getReference("Invitation").child(user.getUid())
+//                .addChildEventListener(new ChildEventListener() {
+//                    @Override
+//                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                        //pTeam.receivedGetInviterinformation(user.getUid());
+//                    }
+//
+//                    @Override
+//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//                });
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
 
         SharedPreferences sharedPref = this.getSharedPreferences("my_data", MODE_PRIVATE);
         String teamId = sharedPref.getString("teamId","");
-
         if(!teamId.equals("")){
-            btnInvite.setVisibility(View.VISIBLE);
-            edtInvite.setVisibility(View.VISIBLE);
-            linear.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            //Thức hiện gọi api kiểm tra user có phải lá leader của team hay không
+            pTeam.receivedIsLeader(teamId, user.getUid(), this);
         }
 
         btnInvite.setOnClickListener(v -> {
@@ -109,7 +108,6 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
                 FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
                 intent.putExtra("userid",user.getUid());
                 startActivity(intent);
-
             }
         });
 
@@ -145,12 +143,21 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
 
     @Override
     public void getInvitersInfo(int resultCode, List<InvitersInfo> invitersInfo, String resultMessage) {
-        Log.i("asdf", invitersInfo.toString());
+
     }
 
     @Override
     public void acceptInvitation(int resultCode, String resultMessage) {
 
+    }
+
+    @Override
+    public void isLeader(int resultCode, String resultMessage) {
+        if(resultCode == 117){
+            btnInvite.setVisibility(View.VISIBLE);
+            edtInvite.setVisibility(View.VISIBLE);
+            linear.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        }
     }
 
     @Override
@@ -202,7 +209,12 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
 
     @Override
     public void inviteMember(int resultCode, String resultMessage) {
-        Toast.makeText(this, resultMessage, Toast.LENGTH_SHORT).show();
+        if(resultCode == 002){
+            Toasty.success(this, resultMessage, Toast.LENGTH_LONG).show();
+        }
+        else{
+
+        }
     }
 
     @Override

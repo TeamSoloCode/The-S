@@ -63,6 +63,21 @@ public class PTeam implements ITeam{
 
     @Override
     public void acceptInvitation(int resultCode, String resultMessage) {
+        callbackToView.acceptInvitation(resultCode, resultMessage);
+    }
 
+    /**
+     * Kiểm tra user có phải la leader hay không
+     * @param userId
+     * @param teamId
+     * @param context
+     */
+    public void receivedIsLeader(String userId, String teamId, Context context){
+        mTeam.handleIsLeader(teamId, userId, context);
+    }
+
+    @Override
+    public void isLeader(int resultCode, String resultMessage) {
+        callbackToView.isLeader(resultCode, resultMessage);
     }
 }
