@@ -5,8 +5,6 @@ import com.example.bruce.myapp.ApiGetObject.GetAllTouristLocation;
 import com.example.bruce.myapp.ApiInterface;
 import com.example.bruce.myapp.Presenter.BigMap.IBigMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,7 +16,6 @@ import retrofit2.Retrofit;
 
 public class MBigMap {
     private IBigMap callback;
-    private DatabaseReference mData = FirebaseDatabase.getInstance().getReference();
     public MBigMap() {
 
     }

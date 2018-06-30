@@ -9,9 +9,12 @@ import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.ListInvitationAdapter;
 import com.example.bruce.myapp.Data.InvitersInfo;
+import com.example.bruce.myapp.Data.TeamMember;
 import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.Team.IViewTeam;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -21,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -29,7 +33,7 @@ public class ListInvitationActvity extends AppCompatActivity implements IViewTea
 
     RecyclerView recyclerViewInvitation;
     private ListInvitationAdapter listInvitationAdapter;
-    private PTeam pTeam =new PTeam(this);
+    private PTeam pTeam = new PTeam(this);
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private ChildEventListener childEventListenerInvitation;
     private DatabaseReference mDatabaseRef;
@@ -71,7 +75,7 @@ public class ListInvitationActvity extends AppCompatActivity implements IViewTea
     }
 
     private void initialize() {
-        recyclerViewInvitation = findViewById(R.id.recyclerViewTeam);
+        recyclerViewInvitation = findViewById(R.id.recyclerViewInvitation);
     }
 
     @Override
@@ -122,6 +126,26 @@ public class ListInvitationActvity extends AppCompatActivity implements IViewTea
 
     @Override
     public void isLeader(int resultCode, String resultMessage) {
+
+    }
+
+    @Override
+    public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
+
+    }
+
+    @Override
+    public void markMemberLocation(HashMap<String, MarkerOptions> listMemberLocation) {
+
+    }
+
+    @Override
+    public void markMemberLocationOnChanged(Marker listMemberMarker) {
+
+    }
+
+    @Override
+    public void leaveMyTeam(int resultCode, String resultMessage) {
 
     }
 }

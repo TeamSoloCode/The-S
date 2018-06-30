@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -23,6 +24,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -33,6 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.MenumapAdapter;
+import com.example.bruce.myapp.Data.InvitersInfo;
+import com.example.bruce.myapp.Data.TeamMember;
 import com.example.bruce.myapp.Data.TouristLocation;
 import com.example.bruce.myapp.Direction.DirectionFinder;
 import com.example.bruce.myapp.Direction.DirectionFinderListener;
@@ -41,12 +45,15 @@ import com.example.bruce.myapp.GPSTracker;
 import com.example.bruce.myapp.Model.MBigMap;
 import com.example.bruce.myapp.Model.MTeam;
 import com.example.bruce.myapp.Presenter.BigMap.PBigMap;
+import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.Information_And_Comments.InformationAndCommentsActivity;
+import com.example.bruce.myapp.View.Team.IViewTeam;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -54,6 +61,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -66,10 +74,11 @@ import com.squareup.picasso.Picasso;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
-public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnMapReadyCallback,DirectionFinderListener,MenumapAdapter.RecyclerViewClicklistener {
+public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnMapReadyCallback,DirectionFinderListener,MenumapAdapter.RecyclerViewClicklistener, IViewTeam{
     //googleMaps
     private GoogleMap mMap;
     private boolean count = false;
@@ -88,6 +97,7 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
     //model
     private MBigMap modelBigMap = new MBigMap();
     private PBigMap pBigMap = new PBigMap(this);
+    private PTeam pTeam = new PTeam(this);
     //direction
     private List<Marker> originMarkers;
     private List<Marker> destinationMarkers;
@@ -96,6 +106,10 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
     List<Marker> locationUser=new ArrayList<>();
     private ProgressDialog progressDialog;
 
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+    SharedPreferences mySharedPref;
+    String teamId = "";
 
     MTeam mTeam = new MTeam();
     @Override
@@ -117,6 +131,8 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         //circle floating action menu
         floatActionMenu();
 
+        mySharedPref = this.getSharedPreferences("my_data", MODE_PRIVATE);
+        teamId = mySharedPref.getString("teamId", "");
     }
 
     /**
@@ -250,9 +266,10 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         //lấy vi trí người dùng
         mMap.setOnMyLocationChangeListener((location) -> {
+            //post user location on firebase database
+            pTeam.receivedPostUserLocation(user.getUid(), teamId, location);
             if (count != true) {
                 origin = location.getLatitude() + ", " + location.getLongitude();
                 mLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -281,6 +298,8 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
 
         //tìm đường của địa điểm truyền từ HistoryAndHobby
         findDirectionFromHistoryAndHobby(origin);
+
+        pTeam.receivedGetAllTeamMember(user.getUid(), teamId);
     }
 
     private void sendNotification(String title, String content) {
@@ -550,8 +569,103 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         }
     }
 
+    //-----------------------------------------Team-------------------------------------------------
+    /**
+     * Get all member and mark members location realtime on gg maps
+     * @param resultCode
+     * @param listTeamMember
+     * @param resultMessage
+     */
+    @Override
+    public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
+        HashMap<String, MarkerOptions> listMemberLocation = new HashMap<>();
+        for(TeamMember teamMember : listTeamMember){
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.title(teamMember.getName());
+            markerOptions.snippet(teamMember.getPhone());
+            markerOptions.position(new LatLng(999,999));
+            listMemberLocation.put(teamMember.getId(), markerOptions);
+        }
+        //lấy danh sách thành viên trong team về
+        if(!teamId.equals("")) {
+            pTeam.receivedGetMemberLocation(listMemberLocation,teamId);
+        }
+    }
 
-//    @Override
+    /**
+     * Mark location in first time
+     * @param listMemberLocation
+     */
+    @Override
+    public void markMemberLocation(HashMap<String, MarkerOptions> listMemberLocation) {
+        HashMap<String, Marker> memberMarkers = new HashMap<>();
+        for(String key: listMemberLocation.keySet()){
+            //không add marker của user lên mMap
+            if(key.equals(user.getUid())){
+                continue;
+            }
+            Marker memberMaker = mMap.addMarker(listMemberLocation.get(key));
+            memberMaker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+            memberMaker.setTag(key);
+            memberMarkers.put(key, memberMaker);
+        }
+        //đưa list user vào hàm mark để add zo firebase
+        pTeam.receivedMarkMemberLocation(memberMarkers);
+    }
+
+    /**
+     * Remark user when user's location changed
+     * @param memberMarker
+     */
+    @Override
+    public void markMemberLocationOnChanged(Marker memberMarker) {
+        //set new position into member marker location
+        memberMarker.setPosition(memberMarker.getPosition());
+        Log.i("asdf", memberMarker.getPosition().toString());
+    }
+
+    @Override
+    public void leaveMyTeam(int resultCode, String resultMessage) {
+
+    }
+
+
+    @Override
+    public void createTeam(int resultCode, String resultMessage) {
+
+    }
+
+    @Override
+    public void hasTeam(int resultCode, String resultMessage) {
+
+    }
+
+    @Override
+    public void inviteMember(int resultCode, String resultMessage) {
+
+    }
+
+    @Override
+    public void getInvitersInfo(int resultCode, List<InvitersInfo> invitersInfo, String resultMessage) {
+
+    }
+
+    @Override
+    public void acceptInvitation(int resultCode, String resultMessage) {
+
+    }
+
+    @Override
+    public void isLeader(int resultCode, String resultMessage) {
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        pTeam.detachingFirebaseListener();
+    }
+
+    //    @Override
 //    public void addMakerMember(String key,GeoLocation location,DataSnapshot dataSnapshot) {
 //        View marker = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);
 //        final ImageView makerImg = (ImageView) marker.findViewById(R.id.markerimg);

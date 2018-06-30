@@ -1,11 +1,17 @@
 package com.example.bruce.myapp.Presenter.Team;
 
 import android.content.Context;
+import android.location.Location;
 
 import com.example.bruce.myapp.Data.InvitersInfo;
+import com.example.bruce.myapp.Data.TeamMember;
 import com.example.bruce.myapp.Model.MTeam;
 import com.example.bruce.myapp.View.Team.IViewTeam;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -73,11 +79,57 @@ public class PTeam implements ITeam{
      * @param context
      */
     public void receivedIsLeader(String userId, String teamId, Context context){
-        mTeam.handleIsLeader(teamId, userId, context);
+        mTeam.handleIsLeader(userId, teamId, context);
     }
 
     @Override
     public void isLeader(int resultCode, String resultMessage) {
         callbackToView.isLeader(resultCode, resultMessage);
+    }
+
+    public void receivedGetAllTeamMember(String userId, String teamId){
+        mTeam.handleGetAllTeamsMember(userId, teamId);
+    }
+
+    @Override
+    public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
+        callbackToView.getAllTeamMember(resultCode, listTeamMember, resultMessage);
+    }
+
+
+
+    public void receivedGetMemberLocation(HashMap<String, MarkerOptions> listMemberLocation, String teamId){
+        mTeam.handleGetMemberLocation(listMemberLocation, teamId);
+    }
+
+    @Override
+    public void markMemberLocation(HashMap<String, MarkerOptions> listMemberLocation) {
+        callbackToView.markMemberLocation(listMemberLocation);
+    }
+
+    public void receivedMarkMemberLocation(HashMap<String, Marker> listMemberLocation){
+        mTeam.handleMarkMemberLocationOnChange(listMemberLocation);
+    }
+
+    @Override
+    public void markMemberLocationOnChanged(Marker memberMarker) {
+        callbackToView.markMemberLocationOnChanged(memberMarker);
+    }
+
+    public void receivedPostUserLocation(String userId, String teamId, Location userLocation){
+        mTeam.handlePostUserLocation(userId, teamId, userLocation);
+    }
+
+    public void detachingFirebaseListener(){
+        mTeam.handleDetachingListener();
+    }
+
+    public void receivedLeaveMyTeam(String userId, String teamId, Context context){
+        mTeam.handleLeaveMyTeam(userId, teamId, context);
+    }
+
+    @Override
+    public void leaveMyTeam(int resultCode, String resultMessage) {
+        callbackToView.leaveMyTeam(resultCode, resultMessage);
     }
 }

@@ -31,6 +31,7 @@ import android.widget.Toast;
 import com.example.bruce.myapp.Adapter.HistoryAdapter;
 import com.example.bruce.myapp.CircleTransform;
 import com.example.bruce.myapp.Data.InvitersInfo;
+import com.example.bruce.myapp.Data.TeamMember;
 import com.example.bruce.myapp.Data.Tourist_Location;
 import com.example.bruce.myapp.Data.UserProfile;
 import com.example.bruce.myapp.GPSTracker;
@@ -49,6 +50,8 @@ import com.example.bruce.myapp.View.Team.TeamActivity;
 import com.example.bruce.myapp.View.TeamSupport.TeamSupportActivity;
 import com.example.bruce.myapp.View.User.UserProfileActivity;
 import com.firebase.geofire.GeoFire;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -59,6 +62,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -590,6 +594,26 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
     @Override
     public void isLeader(int resultCode, String resultMessage) {
+
+    }
+
+    @Override
+    public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
+
+    }
+
+    @Override
+    public void markMemberLocation(HashMap<String, MarkerOptions> listMemberLocation) {
+
+    }
+
+    @Override
+    public void markMemberLocationOnChanged(Marker listMemberMarker) {
+
+    }
+
+    @Override
+    public void leaveMyTeam(int resultCode, String resultMessage) {
 
     }
 }

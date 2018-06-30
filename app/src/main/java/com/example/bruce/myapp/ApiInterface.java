@@ -1,6 +1,7 @@
 package com.example.bruce.myapp;
 
 import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
+import com.example.bruce.myapp.ApiGetObject.GetAllTeamMember;
 import com.example.bruce.myapp.ApiGetObject.GetAllTouristLocation;
 import com.example.bruce.myapp.ApiGetObject.GetInvitersInfo;
 import com.example.bruce.myapp.ApiGetObject.GetTouristLocationDetailById;
@@ -26,6 +27,7 @@ public interface ApiInterface {
      */
     @GET("GetAllTouristLocation")
     Call<GetAllTouristLocation> getAllTouristLocation();
+
     //Get location detail
     @GET("GetTouristLocationDetailById")
     Call<GetTouristLocationDetailById> getTouristLocationById(@Query("id") String locationId);
@@ -60,6 +62,8 @@ public interface ApiInterface {
     Call<CommonResponse> postComment(@Field("locationId") String locationId,
                                     @Field("userId") String userId,
                                     @Field("comment") String comment);
+
+
     //------Team
 
     /**
@@ -130,9 +134,27 @@ public interface ApiInterface {
     Call<CommonResponse> isLeader(@Field("userId") String userId,
                                   @Field("teamId") String teamId);
 
+    /**
+     * Lấy danh sách thành viên trong team
+     * @param userId
+     * @param teamId
+     * @return
+     */
     @Headers("Content-Type: application/x-www-form-urlencoded")
     @FormUrlEncoded
-    @POST("IsLeader")
-    Call<CommonResponse> getAllTeamsMember(@Field("userId") String userId,
-                                            @Field("teamId") String teamId);
+    @POST("GetAllMember")
+    Call<GetAllTeamMember> getAllTeamsMember(@Field("userId") String userId,
+                                             @Field("teamId") String teamId);
+
+    /**
+     * Lấy danh sách thành viên trong team
+     * @param userId
+     * @param teamId
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("LeaveTeam")
+    Call<CommonResponse> leaveMyTeam(@Field("userId") String userId,
+                                       @Field("teamId") String teamId);
 }

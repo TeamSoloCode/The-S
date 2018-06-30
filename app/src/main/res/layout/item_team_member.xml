@@ -47,7 +47,7 @@
                         <TextView
                             android:gravity="center"
                             android:id="@+id/txtTeamNameUser"
-                            android:text="Hải"
+                            android:text=""
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
                     </LinearLayout>
@@ -56,13 +56,13 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <TextView
-                            android:text="Gmail:"
+                            android:text="Email:"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent" />
                         <TextView
                             android:gravity="center"
                             android:id="@+id/txtTeamEmailUser"
-                            android:text="trunghhai@gmail.com"
+                            android:text=""
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
                     </LinearLayout>
@@ -77,23 +77,7 @@
                         <TextView
                             android:gravity="center"
                             android:id="@+id/txtTeamPhoneUser"
-                            android:text="01665275167"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:text="Gender:"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent" />
-                        <TextView
-                            android:gravity="center"
-                            android:id="@+id/txtTeamGendre"
-                            android:text="Male"
+                            android:text=""
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
                     </LinearLayout>
