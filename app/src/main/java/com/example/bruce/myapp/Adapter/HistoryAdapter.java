@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.example.bruce.myapp.Data.Tourist_Location;
 import com.example.bruce.myapp.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -39,9 +38,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        Tourist_Location tl = tourist_locations.get(i);
-        viewHolder.textView.setText(tl.LocationName);
-        Picasso.with(context).load(tl.LocationImg).into(viewHolder.imageView);
+        //TouristLocation tl = tourist_locations.get(i);
+        //viewHolder.textView.setText(tl.getName());
+        //Picasso.with(context).load(tl.getImage()).into(viewHolder.imageView);
     }
 
     @Override

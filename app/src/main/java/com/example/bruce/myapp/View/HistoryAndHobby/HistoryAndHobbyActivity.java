@@ -15,7 +15,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,24 +40,20 @@ import com.example.bruce.myapp.Presenter.MenuFragment.PMenuFragment;
 import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.BigMap.BigMapsActivity;
+import com.example.bruce.myapp.View.Diary.DiaryActivity;
 import com.example.bruce.myapp.View.Information_And_Comments.InformationAndCommentsActivity;
 import com.example.bruce.myapp.View.Invitation.ListInvitationActvity;
 import com.example.bruce.myapp.View.Login.LoginActivity;
 import com.example.bruce.myapp.View.MenuFragment.IViewMenuFragment;
 import com.example.bruce.myapp.View.Team.IViewTeam;
 import com.example.bruce.myapp.View.Team.TeamActivity;
-import com.example.bruce.myapp.View.TeamSupport.TeamSupportActivity;
 import com.example.bruce.myapp.View.User.UserProfileActivity;
 import com.firebase.geofire.GeoFire;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -147,68 +142,68 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
         }else if(Language.equals("Tiếng Việt")){
             Toast.makeText(this, "Tiếng việt", Toast.LENGTH_SHORT).show();
         }
-        FirebaseDatabase.getInstance().getReference("Help").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String nameNeedHelp=dataSnapshot.child("Name").getValue().toString();
-                String key=dataSnapshot.getKey();
-                FirebaseDatabase.getInstance().getReference("Help").child(dataSnapshot.getKey()).child("Team").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if(dataSnapshot.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-//                            dataSnapshot.getRef().removeValue();
-                            Log.d("sadsad",nameNeedHelp);
-                            Intent intent = new Intent(getApplicationContext(), TeamSupportActivity.class);
-                            intent.putExtra("NameNeedHelp",nameNeedHelp);
-                            intent.putExtra("key",key);
-                            intent.putExtra("userId",dataSnapshot.getKey());
-                            startActivity(intent);
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        Log.d("ádasds",dataSnapshot.getKey());
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        FirebaseDatabase.getInstance().getReference("Help").addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                String nameNeedHelp=dataSnapshot.child("Name").getValue().toString();
+//                String key=dataSnapshot.getKey();
+//                FirebaseDatabase.getInstance().getReference("Help").child(dataSnapshot.getKey()).child("Team").addChildEventListener(new ChildEventListener() {
+//                    @Override
+//                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                        if(dataSnapshot.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+////                            dataSnapshot.getRef().removeValue();
+//                            Log.d("sadsad",nameNeedHelp);
+//                            Intent intent = new Intent(getApplicationContext(), TeamSupportActivity.class);
+//                            intent.putExtra("NameNeedHelp",nameNeedHelp);
+//                            intent.putExtra("key",key);
+//                            intent.putExtra("userId",dataSnapshot.getKey());
+//                            startActivity(intent);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+//                        Log.d("ádasds",dataSnapshot.getKey());
+//                    }
+//
+//                    @Override
+//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
     }
 
@@ -285,6 +280,10 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                 }
                 else if(value.equals("Invitation List")){
                     Intent intent = new Intent(HistoryAndHobbyActivity.this, ListInvitationActvity.class);
+                    startActivity(intent);
+                }
+                else if(value.equals("Diary")){
+                    Intent intent = new Intent(HistoryAndHobbyActivity.this, DiaryActivity.class);
                     startActivity(intent);
                 }
             }
@@ -490,22 +489,25 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
         if(resultCode == 111){
             menuItem = new String[]{getString(R.string.MyProfile),
                     getString(R.string.Map),
-                    getString(R.string.Logout),
                     getString(R.string.Team),
-                    "Invitation List"};
+                    "Invitation List",
+                    "Diary",
+                    getString(R.string.Logout)};
         }
         else if(resultCode == 113){
             menuItem = new String[]{getString(R.string.MyProfile),
                     getString(R.string.Map),
-                    getString(R.string.Logout),
                     getString(R.string.CreateTeam),
-                    "Invitation List"};
+                    "Invitation List",
+                    "Diary",
+                    getString(R.string.Logout),};
         }
         else {
             menuItem = new String[]{getString(R.string.MyProfile),
                     getString(R.string.Map),
-                    getString(R.string.Logout),
-                    "Invitation List"};
+                    "Invitation List",
+                    "Diary",
+                    getString(R.string.Logout)};
             Toast.makeText(HistoryAndHobbyActivity.this, resultMessage, Toast.LENGTH_SHORT).show();
         }
 
@@ -523,6 +525,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
         startActivity(getIntent());
     }
 

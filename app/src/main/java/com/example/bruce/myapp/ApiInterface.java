@@ -157,4 +157,10 @@ public interface ApiInterface {
     @POST("LeaveTeam")
     Call<CommonResponse> leaveMyTeam(@Field("userId") String userId,
                                        @Field("teamId") String teamId);
+
+    //------Diary
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("CreateDiary")
+    Call<CommonResponse> createNewDiary(@Field("userId") String userId);
 }

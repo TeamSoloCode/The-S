@@ -78,6 +78,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import es.dmoral.toasty.Toasty;
+
 public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnMapReadyCallback,DirectionFinderListener,MenumapAdapter.RecyclerViewClicklistener, IViewTeam{
     //googleMaps
     private GoogleMap mMap;
@@ -578,6 +580,11 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
      */
     @Override
     public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
+        if(resultCode != 1){
+            Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         HashMap<String, MarkerOptions> listMemberLocation = new HashMap<>();
         for(TeamMember teamMember : listTeamMember){
             MarkerOptions markerOptions = new MarkerOptions();

@@ -17,8 +17,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import com.example.bruce.myapp.Data.Comment;
+
 import com.example.bruce.myapp.Adapter.Comment_Image_Adapter;
+import com.example.bruce.myapp.Data.Comment;
 import com.example.bruce.myapp.Data.Tourist_Location;
 import com.example.bruce.myapp.R;
 import com.google.android.gms.tasks.OnFailureListener;

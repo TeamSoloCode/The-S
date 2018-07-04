@@ -75,7 +75,13 @@
         <activity android:name=".Phongchat" />
         <activity android:name=".View.TeamSupport.TeamSupportActivity" />
         <activity android:name=".View.TeamChat.TeamChatActivity" />
-        <activity android:name=".View.Invitation.ListInvitationActvity"></activity>
+        <activity
+            android:name=".View.Invitation.ListInvitationActvity"
+            android:label="My Invitation" />
+        <activity
+            android:name=".View.Diary.DiaryActivity"
+            android:label="@string/title_activity_diary" />
+        <activity android:name=".View.MyDiary.MyDiaryActivity"></activity>
     </application>
 
 </manifest>
