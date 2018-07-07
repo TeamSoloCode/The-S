@@ -8,11 +8,12 @@ public class Diary {
     private String name;
     private String description;
     private String image;
-    private String createDate;
+    private float createDate;
     private String endDate;
     private String updateDate;
     private float distance;
     private int checkPoint;
+    private int deleteFlag;
 
     public Diary() {
     }
@@ -29,7 +30,7 @@ public class Diary {
         this.image = image;
     }
 
-    public void setCreateDate(String createDate) {
+    public void setCreateDate(float createDate) {
         this.createDate = createDate;
     }
 
@@ -61,7 +62,7 @@ public class Diary {
         return image;
     }
 
-    public String getCreateDate() {
+    public float getCreateDate() {
         return createDate;
     }
 

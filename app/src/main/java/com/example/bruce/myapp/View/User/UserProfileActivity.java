@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -33,7 +34,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -41,6 +41,8 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+
+import es.dmoral.toasty.Toasty;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class UserProfileActivity extends AppCompatActivity implements IViewUserProfile {
@@ -71,12 +73,10 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         initialize();
-        ArrayList<UserProfile> profilesUser = getIntent().getParcelableArrayListExtra("user");
-
         setSupportActionBar(toolbar);
         OnClickFloatingAcionButton();
         CheckGenre(radioGroup);
-        ShowUserInfomation(profilesUser);
+        //ShowUserInfomation(profilesUser);
         SaveUserInfomation(mDataUser);
         OnClickBtnChangePassWord();
 
@@ -124,20 +124,20 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
     private void SaveUserInfomation(DatabaseReference mDataUser) {
         btnSave.setOnClickListener(v -> {
             if(user!=null) {
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(txtUserName.getText().toString().trim())
-                        .build();
-                user.updateProfile(profileUpdates);
-                txtUserName.setText(txtUserName.getText().toString().trim());
-                txtUserProfile_Name_toolbar.setText(txtUserName.getText().toString().trim());
-                mDataUser.child("Email").setValue(txtUserEmail.getText().toString().trim());
-                mDataUser.child("Name").setValue(txtUserName.getText().toString().trim());
-                mDataUser.child("Image").setValue(user.getPhotoUrl().toString());
-                mDataUser.child("Phone").setValue(txtPhone.getText().toString().trim());
-                mDataUser.child("Birthday").setValue(txtBirthday.getText().toString().trim());
-                mDataUser.child("Gender").setValue(gender);
+//                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                        .setDisplayName(txtUserName.getText().toString().trim())
+//                        .build();
+//                user.updateProfile(profileUpdates);
+//                txtUserName.setText(txtUserName.getText().toString().trim());
+//                txtUserProfile_Name_toolbar.setText(txtUserName.getText().toString().trim());
+//                mDataUser.child("Email").setValue(txtUserEmail.getText().toString().trim());
+//                mDataUser.child("Name").setValue(txtUserName.getText().toString().trim());
+//                mDataUser.child("Image").setValue(user.getPhotoUrl().toString());
+//                mDataUser.child("Phone").setValue(txtPhone.getText().toString().trim());
+//                mDataUser.child("Birthday").setValue(txtBirthday.getText().toString().trim());
+//                mDataUser.child("Gender").setValue(gender);
 
-                Toast.makeText(this, "Save Successful !", Toast.LENGTH_SHORT).show();
+                Toasty.success(this, "Save Successful !", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -155,12 +155,10 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
                 } else {
                     rdiFemale.setChecked(true);
                 }
-
     }
 
     private void OnClickFloatingAcionButton() {
         fab.setOnClickListener(view -> {
-
             Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intentCamera, REQUEST_CODE_IMAGE);
         });
@@ -188,15 +186,13 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
         toolbar =  findViewById(R.id.toolbar);
         fab = findViewById(R.id.fab);
 
-        user= FirebaseAuth.getInstance().getCurrentUser();
-        mDataUser= FirebaseDatabase.getInstance().getReference("User").child(user.getUid());
+        user = FirebaseAuth.getInstance().getCurrentUser();
         firebaseAuth= FirebaseAuth.getInstance();
-
-
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
-    FirebaseStorage storage=FirebaseStorage.getInstance();
-    StorageReference storageRef=storage.getReference();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==REQUEST_CODE_IMAGE && resultCode==RESULT_OK && data!=null)
@@ -208,7 +204,8 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
             Bitmap circleBitmap = circleTransform.transform(bitmap);
             imageView.setImageBitmap(circleBitmap);
 
-            StorageReference mountainsRef = storageRef.child("image_"+user.getEmail());
+            StorageReference userImageRef = storageRef.child("Image/User/"+user.getEmail());
+
             imageView.setDrawingCacheEnabled(true);
             imageView.buildDrawingCache();
             Bitmap bitmap1 = imageView.getDrawingCache();
@@ -217,7 +214,7 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
             bitmap1.compress(Bitmap.CompressFormat.JPEG, 80, baos);
             byte[] data1 = baos.toByteArray();
 
-            UploadTask uploadTask = mountainsRef.putBytes(data1);
+            UploadTask uploadTask = userImageRef.putBytes(data1);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
@@ -228,16 +225,11 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
 
-//                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-//
-//                    FirebaseDatabase.getInstance().getReference().child("User").child(firebaseAuth.getCurrentUser().getUid()).child("Image").setValue(downloadUrl.toString());
-//                    UserProfileChangeRequest profileChangeRequest=new UserProfileChangeRequest.Builder()
-//
-//                            .setPhotoUri(Uri.parse(downloadUrl.toString()))
-//                            .build();
-//                    user.updateProfile(profileChangeRequest);
-
-
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(Uri.parse(downloadUrl.toString()))
+                            .build();
+                    user.updateProfile(profileChangeRequest);
                 }
             });
 

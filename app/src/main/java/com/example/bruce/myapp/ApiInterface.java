@@ -1,6 +1,7 @@
 package com.example.bruce.myapp;
 
 import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
+import com.example.bruce.myapp.ApiGetObject.GetAllMyDiaries;
 import com.example.bruce.myapp.ApiGetObject.GetAllTeamMember;
 import com.example.bruce.myapp.ApiGetObject.GetAllTouristLocation;
 import com.example.bruce.myapp.ApiGetObject.GetInvitersInfo;
@@ -156,11 +157,26 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("LeaveTeam")
     Call<CommonResponse> leaveMyTeam(@Field("userId") String userId,
-                                       @Field("teamId") String teamId);
+                                     @Field("teamId") String teamId);
 
     //------Diary
+    /**
+     * Tao nhat ki hanh trinh
+     * @param userId
+     * @return
+     */
     @Headers("Content-Type: application/x-www-form-urlencoded")
     @FormUrlEncoded
     @POST("CreateDiary")
     Call<CommonResponse> createNewDiary(@Field("userId") String userId);
+
+    /**
+     * Get all my diary
+     * @param userId
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("GetAllMyDiary")
+    Call<GetAllMyDiaries> getAllMyDiary(@Field("userId") String userId);
 }

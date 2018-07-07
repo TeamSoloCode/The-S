@@ -40,11 +40,11 @@ import com.example.bruce.myapp.Presenter.MenuFragment.PMenuFragment;
 import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.BigMap.BigMapsActivity;
-import com.example.bruce.myapp.View.Diary.DiaryActivity;
 import com.example.bruce.myapp.View.Information_And_Comments.InformationAndCommentsActivity;
 import com.example.bruce.myapp.View.Invitation.ListInvitationActvity;
 import com.example.bruce.myapp.View.Login.LoginActivity;
 import com.example.bruce.myapp.View.MenuFragment.IViewMenuFragment;
+import com.example.bruce.myapp.View.MyDiary.MyDiaryActivity;
 import com.example.bruce.myapp.View.Team.IViewTeam;
 import com.example.bruce.myapp.View.Team.TeamActivity;
 import com.example.bruce.myapp.View.User.UserProfileActivity;
@@ -283,7 +283,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                     startActivity(intent);
                 }
                 else if(value.equals("Diary")){
-                    Intent intent = new Intent(HistoryAndHobbyActivity.this, DiaryActivity.class);
+                    Intent intent = new Intent(HistoryAndHobbyActivity.this, MyDiaryActivity.class);
                     startActivity(intent);
                 }
             }

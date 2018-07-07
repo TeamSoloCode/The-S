@@ -9,8 +9,44 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerViewMyDiaries"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/linear">
 
     </android.support.v7.widget.RecyclerView>
+    <RelativeLayout
+        android:id="@+id/relLayoutLoading"
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Loading ..."/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/relLayoutNotification"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|center_horizontal">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+            <TextView
+                android:text="You have no diary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:gravity="center"/>
+            <Button
+                android:id="@+id/btnAddDiary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add new diary"/>
+        </LinearLayout>
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>

@@ -156,7 +156,7 @@ public class LoginActivity extends AppCompatActivity implements IViewLogin,Googl
 
             progressDialoglogin = new ProgressDialog(this);
             progressDialoglogin.show();
-            progressDialoglogin.setMessage("Login by Gmail....");
+            progressDialoglogin.setMessage("Login ....");
 
             String email = edtUsername.getText().toString();
             String password = edtPass.getText().toString();
@@ -167,14 +167,13 @@ public class LoginActivity extends AppCompatActivity implements IViewLogin,Googl
     //đăng nhập bằng tài khoản firebase
     @Override
     public void LoginSuccess() {
-        Toasty.success(this,"Login successed",Toast.LENGTH_SHORT);
+        Toasty.success(this,"Login successed",Toast.LENGTH_SHORT).show();
         if(progressDialoglogin.isShowing()){
             progressDialoglogin.dismiss();
         }
         finish();
 
         Intent target = new Intent(LoginActivity.this, HistoryAndHobbyActivity.class);
-        target.putExtra("hobby",userProfile.Hobbie);
         startActivity(target);
     }
 
@@ -218,7 +217,7 @@ public class LoginActivity extends AppCompatActivity implements IViewLogin,Googl
         finish();
         Intent target = new Intent(LoginActivity.this, HistoryAndHobbyActivity.class);
         target.putExtra("hobby",userProfile.Hobbie);
-        Toasty.success(this,"Login facebook successed",Toast.LENGTH_SHORT);
+        Toasty.success(this,"Login facebook successed",Toast.LENGTH_SHORT).show();
         startActivity(target);
 
     }

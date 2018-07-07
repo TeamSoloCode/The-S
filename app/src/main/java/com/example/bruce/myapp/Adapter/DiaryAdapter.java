@@ -2,6 +2,7 @@ package com.example.bruce.myapp.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.TextView;
 
 import com.example.bruce.myapp.Data.Diary;
 import com.example.bruce.myapp.R;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -41,21 +41,11 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Diary diary = diaries.get(position);
-
         holder.txtDiarysName.setText(diary.getName());
         holder.txtDiscription.setText(diary.getDescription());
-        Picasso.with(context).load(diary.getImage()).into(holder.imgMainImage, new Callback() {
-            @Override
-            public void onSuccess() {
-
-                holder.progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onError() {
-
-            }
-        });
+        if(!diary.getImage().isEmpty()){
+            Picasso.with(context).load(diary.getImage()).into(holder.imgMainImage);
+        }
     }
 
     @Override
@@ -76,7 +66,16 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
             imgMainImage = itemView.findViewById(R.id.imgDiaryMainImage);
             txtDiarysName = itemView.findViewById(R.id.txtDiarysName);
             txtDiscription = itemView.findViewById(R.id.txtDiaryDiscription);
-            progressBar= itemView.findViewById(R.id.progress_bar_load_image_comment);
+
+            //1 dong tên nhật kí
+            txtDiarysName.setMaxLines(1);
+            //3 dòng mô tả
+            txtDiscription.setMaxLines(2);
+            //chấm 3 chấm nếu text quá dài
+            txtDiscription.setEllipsize(TextUtils.TruncateAt.END);
+            txtDiarysName.setEllipsize(TextUtils.TruncateAt.END);
+
+            //progressBar = itemView.findViewById(R.id.progress_bar_load_diary_image);
         }
 
         @Override

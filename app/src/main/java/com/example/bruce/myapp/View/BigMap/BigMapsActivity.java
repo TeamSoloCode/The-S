@@ -105,7 +105,7 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
     private List<Marker> destinationMarkers;
     private List<Polyline> polylinePaths;
     private List<Circle> circle=new ArrayList<>();
-    List<Marker> locationUser=new ArrayList<>();
+
     private ProgressDialog progressDialog;
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
