@@ -37,7 +37,7 @@
     <string name="Vietnamese">Vietnamese</string>
     <string name="English">English</string>
     <string name="Recommended">Recommended</string>
-    <string name="Since">Since</string>
+    <string name="Since">Seen</string>
     <string name="title_activity_chat">ActivityChat</string>
     <string name="Enter_your_Chat_Message">Enter your Message....</string>
     <string name="Please_Enter_your_Message">Plese enter your message</string>
@@ -45,4 +45,6 @@
     <string name="Create_room">Create room</string>
     <string name="nearBy">Near you</string>
     <string name="title_activity_diary">Map</string>
+    <string name="Invitation_List">Invitation list</string>
+    <string name="Diary">Diary</string>
 </resources>
