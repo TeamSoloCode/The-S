@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.bruce.myapp.R;
 import com.squareup.picasso.Callback;
@@ -31,9 +33,9 @@ public class Comment_Image_Adapter extends RecyclerView.Adapter<Comment_Image_Ad
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View mView = layoutInflater.inflate(R.layout.item_comment_image,parent,false);
+        View mView = layoutInflater.inflate(R.layout.item_comment_image, parent, false);
 
-        return  new ViewHolder(mView);
+        return new ViewHolder(mView);
     }
 
     @Override
@@ -51,6 +53,14 @@ public class Comment_Image_Adapter extends RecyclerView.Adapter<Comment_Image_Ad
 
             }
         });
+        holder.btnDelImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listImageComment.remove(position);
+                notifyDataSetChanged();
+            }
+        });
+
     }
 
     @Override
@@ -58,24 +68,29 @@ public class Comment_Image_Adapter extends RecyclerView.Adapter<Comment_Image_Ad
         return listImageComment.size();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imageView_Comment;
+        ImageView btnDelImg;
         ProgressBar progressBar;
+
         public ViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             imageView_Comment = itemView.findViewById(R.id.image_Comment);
-            progressBar= itemView.findViewById(R.id.progress_bar_load_image_comment);
+            progressBar = itemView.findViewById(R.id.progress_bar_load_image_comment);
+            btnDelImg = itemView.findViewById(R.id.btndelimg);
         }
 
         @Override
         public void onClick(View v) {
-            if(itemClickListener != null){
-                itemClickListener.itemClickCommentImage(v,getPosition());
+            if (itemClickListener != null) {
+                itemClickListener.itemClickCommentImage(v, getPosition());
             }
         }
     }
-    public void setClickListener(RecyclerViewClicklistener itemClickListener){
+
+    public void setClickListener(RecyclerViewClicklistener itemClickListener) {
         this.itemClickListener = itemClickListener;
     }
 
