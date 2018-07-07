@@ -105,7 +105,8 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     String idCaptain,emailCaptain,idUser;
     private DatabaseReference mDataTeamUser;
     String Language;
-
+    ArrayList<String> listMenu;
+    ArrayAdapter<String> listViewAdapter;
     MTeam mTeam = new MTeam();
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -204,7 +205,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 //
 //            }
 //        });
-
+    setMenuDefault();
     }
 
     private void interfaceFacebookUser(FirebaseUser user, ImageView imgFriendProfilePicture, TextView txtEmail, TextView txtGreeting){
@@ -485,36 +486,17 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
     @Override
     public void hasTeam(int resultCode, String resultMessage) {
-        String[] menuItem;
-        if(resultCode == 111){
-            menuItem = new String[]{getString(R.string.MyProfile),
-                    getString(R.string.Map),
-                    getString(R.string.Team),
-                    "Invitation List",
-                    "Diary",
-                    getString(R.string.Logout)};
+        if(resultCode == 99){
+            Toasty.error(this,resultMessage,Toast.LENGTH_SHORT).show();
+            return;
         }
-        else if(resultCode == 113){
-            menuItem = new String[]{getString(R.string.MyProfile),
-                    getString(R.string.Map),
-                    getString(R.string.CreateTeam),
-                    "Invitation List",
-                    "Diary",
-                    getString(R.string.Logout),};
+        else if(resultCode == 111){
+            listMenu.add(3,getString(R.string.Team));
         }
-        else {
-            menuItem = new String[]{getString(R.string.MyProfile),
-                    getString(R.string.Map),
-                    "Invitation List",
-                    "Diary",
-                    getString(R.string.Logout)};
-            Toast.makeText(HistoryAndHobbyActivity.this, resultMessage, Toast.LENGTH_SHORT).show();
+        else{
+            listMenu.add(3,getString(R.string.CreateTeam));
         }
-
-        ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
-                menuItem);
-        listView.setAdapter(listViewAdapter);
+        listViewAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -618,6 +600,18 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     @Override
     public void leaveMyTeam(int resultCode, String resultMessage) {
 
+    }
+    public void setMenuDefault(){
+        listMenu=new ArrayList<>();
+        listMenu.add(getString(R.string.MyProfile));
+        listMenu.add(getString(R.string.Map));
+        listMenu.add(getString(R.string.Invitation_List));
+        listMenu.add(getString(R.string.Diary));
+        listMenu.add(getString(R.string.Logout));
+        listViewAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1,
+                listMenu);
+        listView.setAdapter(listViewAdapter);
     }
 }
 
