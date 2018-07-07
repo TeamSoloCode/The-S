@@ -6,6 +6,7 @@
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
+
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -17,11 +18,17 @@
             android:layout_marginRight="5dp">
             <ImageView
                 android:id="@+id/image_Comment"
-
                 android:layout_width="150dp"
-                android:layout_height="150dp"
-                />
+                android:layout_height="150dp"/>
+
+            <ImageView
+                android:id="@+id/btndelimg"
+                android:layout_gravity="top|right"
+                android:background="@drawable/buttondele"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />                />
         </android.support.v7.widget.CardView>
+
     </FrameLayout>
 
 </LinearLayout>
