@@ -353,8 +353,10 @@ public class MTeam {
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 MemberLocation memberLocation = dataSnapshot.getValue(MemberLocation.class);
-                listMemberLocation.get(dataSnapshot.getKey()).setPosition(new LatLng(memberLocation.getLat(), memberLocation.getLog()));
-                callback.markMemberLocationOnChanged(listMemberLocation.get(dataSnapshot.getKey()));
+                if(memberLocation != null){
+                    listMemberLocation.get(dataSnapshot.getKey()).setPosition(new LatLng(memberLocation.getLat(), memberLocation.getLog()));
+                    callback.markMemberLocationOnChanged(listMemberLocation.get(dataSnapshot.getKey()));
+                }
             }
 
             @Override

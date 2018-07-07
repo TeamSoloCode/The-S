@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.CircleTransform;
-import com.example.bruce.myapp.Data.UserProfile;
 import com.example.bruce.myapp.Presenter.User.PUser;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.HistoryAndHobby.HistoryAndHobbyActivity;
@@ -40,7 +39,6 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
@@ -65,7 +63,7 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
     private Dialog dia ;
     private boolean gender;
 
-    private PUser pUser=new PUser(this);
+    private PUser pUser = new PUser(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,10 +71,14 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         initialize();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        firebaseAuth= FirebaseAuth.getInstance();
+
+
         setSupportActionBar(toolbar);
         OnClickFloatingAcionButton();
         CheckGenre(radioGroup);
-        //ShowUserInfomation(profilesUser);
+        ShowUserInfomation();
         SaveUserInfomation(mDataUser);
         OnClickBtnChangePassWord();
 
@@ -123,38 +125,32 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
 
     private void SaveUserInfomation(DatabaseReference mDataUser) {
         btnSave.setOnClickListener(v -> {
-            if(user!=null) {
-//                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-//                        .setDisplayName(txtUserName.getText().toString().trim())
-//                        .build();
-//                user.updateProfile(profileUpdates);
-//                txtUserName.setText(txtUserName.getText().toString().trim());
-//                txtUserProfile_Name_toolbar.setText(txtUserName.getText().toString().trim());
-//                mDataUser.child("Email").setValue(txtUserEmail.getText().toString().trim());
-//                mDataUser.child("Name").setValue(txtUserName.getText().toString().trim());
-//                mDataUser.child("Image").setValue(user.getPhotoUrl().toString());
-//                mDataUser.child("Phone").setValue(txtPhone.getText().toString().trim());
-//                mDataUser.child("Birthday").setValue(txtBirthday.getText().toString().trim());
-//                mDataUser.child("Gender").setValue(gender);
-
+            if(user != null) {
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(txtUserName.getText().toString().trim())
+                        .build();
+                user.updateProfile(profileUpdates);
+                txtUserName.setText(txtUserName.getText().toString().trim());
+                txtUserProfile_Name_toolbar.setText(txtUserName.getText().toString().trim());
                 Toasty.success(this, "Save Successful !", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void ShowUserInfomation(ArrayList<UserProfile> profilesUser) {
+    private void ShowUserInfomation() {
         txtUserEmail.setText(user.getEmail());
         txtUserName.setText(user.getDisplayName());
         txtUserProfile_Name_toolbar.setText(user.getDisplayName());
         Picasso.with(this).load(user.getPhotoUrl()).transform(new CircleTransform()).into(imageView);
-            txtBirthday.setText(profilesUser.get(0).Birthday);
-            txtPhone.setText(profilesUser.get(0).Phone);
-                if(profilesUser.get(0).Gender ==true)
-                {
-                    rdiMale.setChecked(true);
-                } else {
-                    rdiFemale.setChecked(true);
-                }
+        //txtBirthday.setText(profilesUser.get(0).Birthday);
+        txtPhone.setText(user.getPhoneNumber());
+
+//        if(profilesUser.get(0).Gender)
+//        {
+//            rdiMale.setChecked(true);
+//        } else {
+//            rdiFemale.setChecked(true);
+//        }
     }
 
     private void OnClickFloatingAcionButton() {
@@ -185,9 +181,6 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
 
         toolbar =  findViewById(R.id.toolbar);
         fab = findViewById(R.id.fab);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        firebaseAuth= FirebaseAuth.getInstance();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
