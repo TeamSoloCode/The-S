@@ -279,11 +279,11 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                         }
                     });
                 }
-                else if(value.equals("Invitation List")){
+                else if(value.equals(getString(R.string.Invitation_List))){
                     Intent intent = new Intent(HistoryAndHobbyActivity.this, ListInvitationActvity.class);
                     startActivity(intent);
                 }
-                else if(value.equals("Diary")){
+                else if(value.equals(getString(R.string.Diary))){
                     Intent intent = new Intent(HistoryAndHobbyActivity.this, MyDiaryActivity.class);
                     startActivity(intent);
                 }
