@@ -41,7 +41,6 @@ public class ListInvitationAdapter extends RecyclerView.Adapter<ListInvitationAd
         InvitersInfo inviter = listInviter.get(position);
         Picasso.with(context).load(inviter.getInvitersPhotoURL()).transform(new CircleTransform()).into(holder.imgTeamUser);
         holder.txtTeamNameUser.setText(inviter.getInvitersName());
-        holder.txtTeamEmailUser.setText(inviter.getInvitersEmail());
         holder.txtTeamsName.setText(inviter.getTeamsName());
 
 //        FirebaseDatabase.getInstance().getReference("TeamUser").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -64,8 +63,7 @@ public class ListInvitationAdapter extends RecyclerView.Adapter<ListInvitationAd
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView imgTeamUser;
-        ImageButton moveMember;
-        TextView txtTeamNameUser,txtTeamEmailUser,txtTeamsName,txtTeamGendre;
+        TextView txtTeamNameUser,txtTeamEmailUser,txtTeamsName;
         public ViewHolder(View itemView) {
             super(itemView);
 
@@ -73,11 +71,8 @@ public class ListInvitationAdapter extends RecyclerView.Adapter<ListInvitationAd
 
             imgTeamUser=itemView.findViewById(R.id.imgTeamUser);
             txtTeamNameUser=itemView.findViewById(R.id.txtTeamNameUser);
-            txtTeamEmailUser=itemView.findViewById(R.id.txtTeamEmailUser);
             txtTeamsName=itemView.findViewById(R.id.txtTeamsName);
-            txtTeamGendre=itemView.findViewById(R.id.txtTeamGendre);
-            moveMember = itemView.findViewById(R.id.moveMember);
-            moveMember.setOnClickListener(this);
+
 
         }
 

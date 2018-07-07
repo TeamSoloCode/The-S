@@ -77,7 +77,6 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.ViewHolder>  {
             txtTeamNameUser=itemView.findViewById(R.id.txtTeamNameUser);
             txtTeamEmailUser=itemView.findViewById(R.id.txtTeamEmailUser);
             txtTeamPhoneUser=itemView.findViewById(R.id.txtTeamPhoneUser);
-            txtTeamGendre=itemView.findViewById(R.id.txtTeamGendre);
             moveMember=itemView.findViewById(R.id.moveMember);
             moveMember.setOnLongClickListener(this);
         }

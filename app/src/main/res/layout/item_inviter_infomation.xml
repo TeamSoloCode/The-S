@@ -12,14 +12,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ImageButton
-                android:visibility="invisible"
-                android:id="@+id/moveMember"
-                android:layout_width="50px"
-                android:layout_height="50px"
-                android:background="#FFFFFF"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/if_delete_70984"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,44 +34,17 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <TextView
+                            android:layout_weight="3"
                             android:text="Name:"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent" />
                         <TextView
-                            android:gravity="center"
+
+                            android:layout_weight="7"
+                            android:gravity="center|left"
                             android:id="@+id/txtTeamNameUser"
                             android:text="Hải"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:text="Gmail:"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent" />
-                        <TextView
-                            android:gravity="center"
-                            android:id="@+id/txtTeamEmailUser"
-                            android:text="trunghhai@gmail.com"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:text="Teams name:"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent" />
-                        <TextView
-                            android:gravity="center"
-                            android:id="@+id/txtTeamsName"
-                            android:text="01665275167"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent" />
                     </LinearLayout>
 
@@ -87,16 +53,20 @@
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
                         <TextView
-                            android:text="Gender:"
-                            android:layout_width="wrap_content"
+                            android:layout_weight="3"
+                            android:text="Teams name:"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent" />
                         <TextView
-                            android:gravity="center"
-                            android:id="@+id/txtTeamGendre"
-                            android:text="Male"
-                            android:layout_width="match_parent"
+                            android:layout_weight="7"
+                            android:gravity="center|left"
+                            android:id="@+id/txtTeamsName"
+                            android:text="01665275167"
+                            android:layout_width="0dp"
                             android:layout_height="match_parent" />
                     </LinearLayout>
+
+
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
