@@ -225,7 +225,6 @@ public class UserProfileActivity extends AppCompatActivity implements IViewUserP
                     user.updateProfile(profileChangeRequest);
                 }
             });
-
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

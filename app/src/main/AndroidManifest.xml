@@ -64,8 +64,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".View.User.UserProfileActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Profile"/>
+            android:label="Profile"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".View.Team.TeamActivity" />
         <activity android:name=".View.Write_Comment.Write_Comment_Activity" />
         <activity android:name=".View.Register.RegisterActivity" />
@@ -82,7 +82,8 @@
         <activity
             android:name=".View.Diary.DiaryActivity"
             android:label="@string/title_activity_diary" />
-        <activity android:name=".View.MyDiary.MyDiaryActivity"></activity>
+        <activity android:name=".View.MyDiary.MyDiaryActivity" />
+        <activity android:name=".View.DiaryCheckPoint.DiaryCheckPointActivity"></activity>
     </application>
 
 </manifest>

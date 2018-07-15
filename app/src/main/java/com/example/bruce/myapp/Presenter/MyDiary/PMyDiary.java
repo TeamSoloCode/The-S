@@ -1,7 +1,7 @@
 package com.example.bruce.myapp.Presenter.MyDiary;
 
 import com.example.bruce.myapp.Data.Diary;
-import com.example.bruce.myapp.Model.MDiary;
+import com.example.bruce.myapp.Model.MMyDiary;
 import com.example.bruce.myapp.View.MyDiary.IViewMyDiary;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
  */
 
 public class PMyDiary implements IMyDiary {
-    private MDiary mDiary = new MDiary(this);
+    private MMyDiary mDiary = new MMyDiary(this);
     private IViewMyDiary callbackToView;
 
     public PMyDiary(IViewMyDiary callbackToView) {

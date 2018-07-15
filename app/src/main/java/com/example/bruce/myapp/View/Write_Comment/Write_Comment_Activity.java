@@ -111,7 +111,7 @@ public class Write_Comment_Activity extends AppCompatActivity {
 
                     myComment.userName = firebaseAuth.getCurrentUser().getDisplayName();
 
-                     key = mData.child("Comments").push().getKey();
+                    key = mData.child("Comments").push().getKey();
                     myComment.commentID=key;
                     Comment   = mData.child("Comments").child(key);
                     Comment.setValue(myComment);
@@ -188,7 +188,7 @@ public class Write_Comment_Activity extends AppCompatActivity {
                             filepath = item.getUri();
                             mArrayUri.add(filepath);
                             String path= mArrayUri.get(i).toString();
-//                             imageHinh=new ImageHinh(mArrayUri.get(i).toString());
+//                          imageHinh=new ImageHinh(mArrayUri.get(i).toString());
                             imagesPost.add(path);
 
 

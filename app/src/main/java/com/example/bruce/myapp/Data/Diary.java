@@ -5,6 +5,7 @@ package com.example.bruce.myapp.Data;
  */
 
 public class Diary {
+    private String id;
     private String name;
     private String description;
     private String image;
@@ -17,6 +18,7 @@ public class Diary {
 
     public Diary() {
     }
+
 
     public void setName(String name) {
         this.name = name;
@@ -80,5 +82,9 @@ public class Diary {
 
     public int getCheckPoint() {
         return checkPoint;
+    }
+
+    public String getId() {
+        return id;
     }
 }

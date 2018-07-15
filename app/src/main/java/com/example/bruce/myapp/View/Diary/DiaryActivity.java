@@ -1,36 +1,56 @@
 package com.example.bruce.myapp.View.Diary;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.bruce.myapp.Data.CheckPoint;
 import com.example.bruce.myapp.Direction.DirectionFinder;
 import com.example.bruce.myapp.Direction.DirectionFinderListener;
 import com.example.bruce.myapp.Direction.Route;
+import com.example.bruce.myapp.Presenter.Diary.PDiary;
 import com.example.bruce.myapp.R;
+import com.example.bruce.myapp.View.DiaryCheckPoint.DiaryCheckPointActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DiaryActivity extends FragmentActivity implements OnMapReadyCallback, DirectionFinderListener {
+import es.dmoral.toasty.Toasty;
+
+public class DiaryActivity extends FragmentActivity implements OnMapReadyCallback,
+        DirectionFinderListener, View.OnClickListener, IViewDiary, GoogleMap.OnMarkerClickListener{
 
     private GoogleMap mMap;
     private ProgressDialog progressDialog;
+    //firebase
+    private FirebaseUser user;
+    ImageView imgAddCheckPoint;
     //direction
     private List<Marker> originMarkers;
     private List<Marker> destinationMarkers;
     private List<Polyline> polylinePaths;
     private List<Circle> circle=new ArrayList<>();
+
+    private String diaryId;
+    private PDiary pDiary;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +59,14 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        diaryId = getIntent().getStringExtra("diaryId");
+        pDiary = new PDiary(this);
+        //goi api lấy tất cả check point của user về
+        pDiary.receivedGetAllCheckPoint(user.getUid(), diaryId);
+
+        initialize();
+        imgAddCheckPoint.setOnClickListener(this);
     }
 
 
@@ -54,20 +82,61 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        mMap.setOnMarkerClickListener(this);
     }
 
-    private void drawDiaryPolylineOnMap(List<Route> routes){
-        for (Route route : routes) {
-            PolylineOptions polylineOptions = new PolylineOptions().
-                    geodesic(true).
-                    color(Color.GRAY).
-                    width(10);
+    private void initialize(){
+        imgAddCheckPoint = findViewById(R.id.imgAddCheckPoint);
+    }
 
-            for (int i = 0; i < route.points.size(); i++)
-                polylineOptions.add(route.points.get(i));
+    private void drawDiaryPolylineOnMap(ArrayList<LatLng> listLatLng){
+        polylinePaths = new ArrayList<>();
 
+        PolylineOptions polylineOptions = new PolylineOptions().
+                geodesic(true).
+                color(Color.GRAY).
+                width(10);
+        for (LatLng latLng : listLatLng) {
+            polylineOptions.add(latLng);
             polylinePaths.add(mMap.addPolyline(polylineOptions));
+        }
+    }
+
+
+    @Override
+    public void getAllCheckPoint(int resultCode, ArrayList<CheckPoint> listCheckPoint, String resultMessage) {
+        if(resultCode != 1){
+            Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ArrayList<LatLng> listLatLng = new ArrayList<>();
+        for(CheckPoint checkPoint : listCheckPoint){
+            LatLng checkPointLocation = new LatLng(checkPoint.getLat(), checkPoint.getLog());
+            listLatLng.add(checkPointLocation);
+            mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                    .title(checkPoint.getDescription()).icon(null)).setTag(checkPoint.getId());
+        }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(listLatLng.get(0), 14));
+        drawDiaryPolylineOnMap(listLatLng);
+    }
+
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+
+        return false;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.imgAddCheckPoint:
+                Intent intent = new Intent(this, DiaryCheckPointActivity.class);
+                intent.putExtra("diaryId", diaryId);
+                startActivity(intent);
+                finish();
+                break;
         }
     }
 
@@ -146,5 +215,11 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
 
             polylinePaths.add(mMap.addPolyline(polylineOptions));
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

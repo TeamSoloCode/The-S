@@ -1,82 +1,45 @@
 package com.example.bruce.myapp.Model;
 
 import com.example.bruce.myapp.ApiClient;
-import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
-import com.example.bruce.myapp.ApiGetObject.GetAllMyDiaries;
+import com.example.bruce.myapp.ApiGetObject.GetAllCheckPoint;
 import com.example.bruce.myapp.ApiInterface;
-import com.example.bruce.myapp.Presenter.MyDiary.IMyDiary;
+import com.example.bruce.myapp.Presenter.Diary.IDiary;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 
 /**
- * Created by BRUCE on 7/1/2018.
+ * Created by BRUCE on 7/15/2018.
  */
 
 public class MDiary {
-    private IMyDiary callback;
+    IDiary callback;
 
-    public MDiary() {}
+    public MDiary(IDiary callback){this.callback = callback;}
 
-    public MDiary(IMyDiary callback){this.callback = callback;}
-
-    /**
-     * Create new diary
-     * @param userId
-     */
-    public void createDiary(String userId){
+    public void getAllCheckPoint(String userId, String diaryId){
         Retrofit retrofit = ApiClient.getApiClient();
 
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
-        apiInterface.createNewDiary(userId).enqueue(new Callback<CommonResponse>() {
+        apiInterface.getAllCheckPoint(userId, diaryId).enqueue(new Callback<GetAllCheckPoint>() {
             @Override
-            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+            public void onResponse(Call<GetAllCheckPoint> call, retrofit2.Response<GetAllCheckPoint> response) {
                 if(response.isSuccessful()){
-                    callback.createNewDiary(response.body().getResultCode(),response.body().getResultMessage().toString());
-                }
-                else{
-                    callback.createNewDiary(99,"Không thể kết nối với máy chủ");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CommonResponse> call, Throwable t) {
-                callback.createNewDiary(99,"Không thể kết nối với máy chủ");
-            }
-        });
-    }
-
-    /**
-     * Get all my diaries
-     * @param userId
-     */
-    public void getAllMyDiary(String userId){
-        Retrofit retrofit = ApiClient.getApiClient();
-
-        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
-
-        apiInterface.getAllMyDiary(userId).enqueue(new Callback<GetAllMyDiaries>() {
-            @Override
-            public void onResponse(Call<GetAllMyDiaries> call, retrofit2.Response<GetAllMyDiaries> response) {
-                if(response.isSuccessful()){
-                    callback.getAllMyDiary(response.body().getResultCode(),
+                    callback.getAllCheckPoint(
+                            response.body().getResultCode(),
                             response.body().getResultData(),
                             "");
                 }
                 else{
-                    callback.getAllMyDiary(99,
-                            null,
-                            "Không thể kết nối với máy chủ");
+                    callback.getAllCheckPoint(99,null,"Không thể kết nối với máy chủ");
                 }
             }
 
             @Override
-            public void onFailure(Call<GetAllMyDiaries> call, Throwable t) {
-                callback.getAllMyDiary(99,
-                        null,
-                        "Không thể kết nối với máy chủ");
+            public void onFailure(Call<GetAllCheckPoint> call, Throwable t) {
+                callback.getAllCheckPoint(99,null,"Không thể kết nối với máy chủ");
             }
         });
     }

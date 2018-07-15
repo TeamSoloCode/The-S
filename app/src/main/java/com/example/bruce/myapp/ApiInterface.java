@@ -1,6 +1,7 @@
 package com.example.bruce.myapp;
 
 import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
+import com.example.bruce.myapp.ApiGetObject.GetAllCheckPoint;
 import com.example.bruce.myapp.ApiGetObject.GetAllMyDiaries;
 import com.example.bruce.myapp.ApiGetObject.GetAllTeamMember;
 import com.example.bruce.myapp.ApiGetObject.GetAllTouristLocation;
@@ -179,4 +180,30 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("GetAllMyDiary")
     Call<GetAllMyDiaries> getAllMyDiary(@Field("userId") String userId);
+
+    /**
+     * Add diatys's check point
+     * @param userId
+     * @param diaryId
+     * @param data
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("AddCheckPoint")
+    Call<CommonResponse> addDiaryCheckPoint(@Field("userId") String userId,
+                                            @Field("diaryId") String diaryId,
+                                            @Field("data") String data);
+
+    /**
+     * Get all users checkpoint
+     * @param userId
+     * @param diaryId
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("GetAllCheckPoint")
+    Call<GetAllCheckPoint> getAllCheckPoint(@Field("userId") String userId,
+                                            @Field("diaryId") String diaryId);
 }
