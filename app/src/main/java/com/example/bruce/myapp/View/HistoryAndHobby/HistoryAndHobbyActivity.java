@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.HistoryAdapter;
+import com.example.bruce.myapp.AddMissingLocation;
 import com.example.bruce.myapp.CircleTransform;
 import com.example.bruce.myapp.Data.InvitersInfo;
 import com.example.bruce.myapp.Data.TeamMember;
@@ -283,6 +284,10 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                 else if(value.equals(getString(R.string.Diary))){
                     Intent intent = new Intent(HistoryAndHobbyActivity.this, MyDiaryActivity.class);
                     startActivity(intent);
+                }
+                else if(value.equals(getString(R.string.AddMissingLocation))){
+                    Intent target = new Intent(HistoryAndHobbyActivity.this, AddMissingLocation.class);
+                    startActivity(target);
                 }
             }
         });
@@ -595,7 +600,8 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
         listMenu.add(getString(R.string.Invitation_List));
         listMenu.add(getString(R.string.Diary));
         listMenu.add(getString(R.string.Logout));
-        listViewAdapter = new ArrayAdapter<String>(this,
+        listMenu.add(getString(R.string.AddMissingLocation));
+    listViewAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 listMenu);
         listView.setAdapter(listViewAdapter);

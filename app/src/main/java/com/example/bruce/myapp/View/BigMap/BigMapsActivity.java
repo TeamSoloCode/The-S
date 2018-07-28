@@ -252,8 +252,8 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
                 if(ping != null){
                     if(!userId.equals(ping.getUserId())){
                         if(ping.getAddedTime() - 300000 <= System.currentTimeMillis()){
-                            String title = ping.getUserName() + " "
-                            sendNotification();
+                            String title = ping.getUserName() + " ";
+                        //    sendNotification();
                         }
                     }
                 }

@@ -62,18 +62,15 @@ public class ListInvitationAdapter extends RecyclerView.Adapter<ListInvitationAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        ImageView imgTeamUser;
+        ImageView imgTeamUser,imgAccept;
         TextView txtTeamNameUser,txtTeamEmailUser,txtTeamsName;
         public ViewHolder(View itemView) {
             super(itemView);
-
-            itemView.setOnClickListener(this);
-
             imgTeamUser=itemView.findViewById(R.id.imgTeamUser);
             txtTeamNameUser=itemView.findViewById(R.id.txtTeamNameUser);
             txtTeamsName=itemView.findViewById(R.id.txtTeamsName);
-
-
+            imgAccept=itemView.findViewById(R.id.imgAccept);
+            imgAccept.setOnClickListener(this);
         }
 
         @Override

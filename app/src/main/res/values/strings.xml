@@ -47,4 +47,9 @@
     <string name="title_activity_diary">Map</string>
     <string name="Invitation_List">Invitation list</string>
     <string name="Diary">Diary</string>
+    <string name="AddMissingLocation">Add Missing Location</string>
+    <string name="MessageNameNull">Please enter the name of your place</string>
+    <string name="MessageKindgoryNull">Please enter the category of your place</string>
+    <string name="MessageAddressNull">Please enter the address of your place</string>
+    <string name="MessageCoordinatesNull">Please click on the map above to select coordinates</string>
 </resources>

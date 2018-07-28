@@ -37,4 +37,9 @@
     <string name="ChangeLanguage">Thay đổi ngôn ngữ</string>
     <string name="Recommended">Đề Xuất cho bạn</string>
     <string name="Enter_your_Chat_Message">Nhập tin nhắn...</string>
+    <string name="AddMissingLocation">Thêm địa điểm mới</string>
+    <string name="MessageNameNull">Vui lòng nhập tên địa điểm</string>
+    <string name="MessageKindgoryNull">Vui lòng nhập loại địa điểm của bạn</string>
+    <string name="MessageAddressNull">Vui lòng nhập địa chỉ của địa điểm của bạn </string>
+    <string name="MessageCoordinatesNull">Vui lòng nhấp vào bản đồ ở trên để chọn tọa độ</string>
 </resources>

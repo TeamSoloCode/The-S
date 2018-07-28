@@ -14,9 +14,11 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/infoInviter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center">
                 <ImageView
                     android:id="@+id/imgTeamUser"
                     android:layout_width="70dp"
@@ -69,6 +71,14 @@
 
                 </LinearLayout>
             </LinearLayout>
+            <ImageView
+                android:src="@drawable/if_button_ok_1710"
+                android:id="@+id/imgAccept"
+                android:layout_width="30dp"
+                android:layout_height="20dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignRight="@+id/infoInviter" />
+
         </RelativeLayout>
 
     </FrameLayout>

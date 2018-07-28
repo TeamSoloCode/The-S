@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -86,7 +85,13 @@
             android:name=".View.Diary.DiaryActivity"
             android:label="@string/title_activity_diary" />
         <activity android:name=".View.MyDiary.MyDiaryActivity" />
-        <activity android:name=".View.DiaryCheckPoint.DiaryCheckPointActivity"></activity>
+        <activity android:name=".View.DiaryCheckPoint.DiaryCheckPointActivity" />
+        <activity
+            android:name=".AddMissingLocation"
+            android:configChanges="orientation"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:parentActivityName=".View.HistoryAndHobby.HistoryAndHobbyActivity"/>
     </application>
 
 </manifest>
