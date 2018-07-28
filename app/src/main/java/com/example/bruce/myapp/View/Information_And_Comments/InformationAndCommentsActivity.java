@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -167,11 +166,11 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1) {
+        if (resultCode == RESULT_OK && requestCode == 1) {
 
-            if (resultCode == RESULT_OK) {
+            if (data.getData() != null) {
 
-                if (data.getData() != null) {
+                if (data.getClipData() != null) {
 
                     filepath = data.getData();
                     ClipData mClipData = data.getClipData();
@@ -187,8 +186,6 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
                     recyclerView.setAdapter(adapterImage);
                     recyclerView.setVisibility(View.VISIBLE);
                     adapterImage.notifyDataSetChanged();
-
-
                 } else {
                     if (data.getClipData() != null) {
                         ClipData mClipData = data.getClipData();
@@ -233,7 +230,6 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-
                         }
 
 
@@ -245,7 +241,6 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
         }
 
     }
-
 
     private void upload() {
         if (filepath != null) {

@@ -28,4 +28,13 @@ public class PBigMap implements IBigMap {
     public ArrayList<TouristLocation> getAllTouristLocation(ArrayList<TouristLocation> listTouristLocation, int resultCode, String resultMessage) {
         return callbackToView.getAllTouristLocation(listTouristLocation, resultCode, resultMessage);
     }
+
+    public void receivedSendPing(String userId, String teamId, int pingCode){
+        modelBigMap.sendPing(userId, teamId, pingCode);
+    }
+
+    @Override
+    public void sendPing(int resultCode, String resultMessage) {
+
+    }
 }

@@ -21,6 +21,12 @@ public class MDiaryCheckPoint {
 
     public MDiaryCheckPoint(IDiaryCheckPoint callback){this.callback = callback;}
 
+    /**
+     * Add chack point
+     * @param userId
+     * @param diaryId
+     * @param checkPoint
+     */
     public void addDiaryCheckPoint(String userId, String diaryId, CheckPoint checkPoint){
         Gson gson = new Gson();
 
@@ -44,6 +50,39 @@ public class MDiaryCheckPoint {
             @Override
             public void onFailure(Call<CommonResponse> call, Throwable t) {
                 callback.addDiaryCheckPoint(99,"Không thể kết nối với máy chủ");
+            }
+        });
+    }
+
+    /**
+     * Update check points
+     * @param userId
+     * @param diaryId
+     * @param checkPoint
+     */
+    public void updateDiaryCheckPoint(String userId, String diaryId, CheckPoint checkPoint){
+        Gson gson = new Gson();
+
+        String jsonData = gson.toJson(checkPoint);
+
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.updateDiaryCheckPoint(userId, diaryId, jsonData).enqueue(new Callback<CommonResponse>() {
+            @Override
+            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                if(response.isSuccessful()){
+                    callback.updateDiaryCheckPoint(response.body().getResultCode(),response.body().getResultMessage().toString());
+                }
+                else{
+                    callback.updateDiaryCheckPoint(99,"Không thể kết nối với máy chủ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                callback.updateDiaryCheckPoint(99,"Không thể kết nối với máy chủ");
             }
         });
     }

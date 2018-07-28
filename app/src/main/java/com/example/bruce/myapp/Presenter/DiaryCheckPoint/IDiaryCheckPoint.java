@@ -6,4 +6,5 @@ package com.example.bruce.myapp.Presenter.DiaryCheckPoint;
 
 public interface IDiaryCheckPoint {
     void addDiaryCheckPoint(int resultCode, String resultMessage);
+    void updateDiaryCheckPoint(int resultCode, String resultMessage);
 }

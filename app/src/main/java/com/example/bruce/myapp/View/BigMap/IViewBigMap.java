@@ -13,4 +13,5 @@ public interface IViewBigMap {
             ArrayList<TouristLocation> listTouristLocation,
             int resultCode,
             String resultMessage);
+    void sendPing(int resultCode, String resultMessage);
 }

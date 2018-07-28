@@ -36,10 +36,12 @@ import java.util.List;
 import es.dmoral.toasty.Toasty;
 
 public class DiaryActivity extends FragmentActivity implements OnMapReadyCallback,
-        DirectionFinderListener, View.OnClickListener, IViewDiary, GoogleMap.OnMarkerClickListener{
+        DirectionFinderListener, View.OnClickListener, GoogleMap.OnInfoWindowClickListener, IViewDiary{
 
     private GoogleMap mMap;
     private ProgressDialog progressDialog;
+
+    private ArrayList<CheckPoint> listCheckPoint;
     //firebase
     private FirebaseUser user;
     ImageView imgAddCheckPoint;
@@ -82,7 +84,7 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setOnMarkerClickListener(this);
+        mMap.setOnInfoWindowClickListener(this);
     }
 
     private void initialize(){
@@ -118,14 +120,26 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
                     .title(checkPoint.getDescription()).icon(null)).setTag(checkPoint.getId());
         }
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(listLatLng.get(0), 14));
-        drawDiaryPolylineOnMap(listLatLng);
+        //drawDiaryPolylineOnMap(listLatLng);
+        this.listCheckPoint = listCheckPoint;
     }
 
 
     @Override
-    public boolean onMarkerClick(Marker marker) {
-
-        return false;
+    public void onInfoWindowClick(Marker marker) {
+        Intent intent = new Intent(this, DiaryCheckPointActivity.class);
+        for(CheckPoint checkPoint : this.listCheckPoint){
+            if(checkPoint.getId().equals(marker.getTag())){
+                ArrayList<CheckPoint> passData = new ArrayList<>();
+                passData.add(checkPoint);
+                intent.putParcelableArrayListExtra("checkpoint", passData);
+                intent.putExtra("diaryId", diaryId);
+                intent.putExtra("mode","update");
+                startActivity(intent);
+                finish();
+                break;
+            }
+        }
     }
 
     @Override
@@ -134,6 +148,7 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
             case R.id.imgAddCheckPoint:
                 Intent intent = new Intent(this, DiaryCheckPointActivity.class);
                 intent.putExtra("diaryId", diaryId);
+                intent.putExtra("mode","add");
                 startActivity(intent);
                 finish();
                 break;

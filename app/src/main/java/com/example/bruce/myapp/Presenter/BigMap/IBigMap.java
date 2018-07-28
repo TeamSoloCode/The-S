@@ -12,4 +12,5 @@ public interface IBigMap {
     ArrayList<TouristLocation> getAllTouristLocation(
             ArrayList<TouristLocation> listTouristLocation,
             int resultCode, String resultMessage);
+    void sendPing(int resultCode, String resultMessage);
 }

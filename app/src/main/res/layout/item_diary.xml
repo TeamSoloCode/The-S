@@ -31,13 +31,28 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Discription ..."/>
-
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:text="Check point:"
+                        android:layout_height="wrap_content"
+                        android:textSize="12dp" />
+                    <TextView
+                        android:id="@+id/txtCheckPoint"
+                        android:layout_width="0dp"
+                        android:layout_weight="6"
+                        android:layout_height="wrap_content"
+                        android:textSize="11dp" />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/txtCreatedDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
-                    android:text="1/1/96"/>
+                    android:textSize="10dp" />
             </LinearLayout>
 
             <LinearLayout

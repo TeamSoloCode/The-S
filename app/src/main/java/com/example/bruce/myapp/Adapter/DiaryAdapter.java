@@ -14,7 +14,10 @@ import com.example.bruce.myapp.Data.Diary;
 import com.example.bruce.myapp.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by BRUCE on 7/4/2018.
@@ -43,6 +46,14 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         Diary diary = diaries.get(position);
         holder.txtDiarysName.setText(diary.getName());
         holder.txtDiscription.setText(diary.getDescription());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(diary.getCreateDate());
+        holder.txtCreatedDate.setText(sdf.format(calendar.getTime()));
+
+        holder.txtCheckPoint.setText(String.valueOf(diary.getCheckPoint()));
+
         if(!diary.getImage().isEmpty()){
             Picasso.with(context).load(diary.getImage()).into(holder.imgMainImage);
         }
@@ -55,8 +66,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imgMainImage;
-        TextView txtDiarysName;
-        TextView txtDiscription;
+        TextView txtDiarysName, txtDiscription, txtCreatedDate, txtCheckPoint;
         ProgressBar progressBar;
         public ViewHolder(View itemView) {
             super(itemView);
@@ -66,6 +76,8 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
             imgMainImage = itemView.findViewById(R.id.imgDiaryMainImage);
             txtDiarysName = itemView.findViewById(R.id.txtDiarysName);
             txtDiscription = itemView.findViewById(R.id.txtDiaryDiscription);
+            txtCreatedDate = itemView.findViewById(R.id.txtCreatedDate);
+            txtCheckPoint = itemView.findViewById(R.id.txtCheckPoint);
 
             //1 dong tên nhật kí
             txtDiarysName.setMaxLines(1);

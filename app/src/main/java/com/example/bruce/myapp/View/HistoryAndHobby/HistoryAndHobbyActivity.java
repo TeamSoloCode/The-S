@@ -49,15 +49,12 @@ import com.example.bruce.myapp.View.Team.IViewTeam;
 import com.example.bruce.myapp.View.Team.TeamActivity;
 import com.example.bruce.myapp.View.User.UserProfileActivity;
 import com.firebase.geofire.GeoFire;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -584,16 +581,6 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
 
     @Override
     public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
-
-    }
-
-    @Override
-    public void markMemberLocation(HashMap<String, MarkerOptions> listMemberLocation) {
-
-    }
-
-    @Override
-    public void markMemberLocationOnChanged(Marker listMemberMarker) {
 
     }
 

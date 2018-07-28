@@ -196,6 +196,21 @@ public interface ApiInterface {
                                             @Field("data") String data);
 
     /**
+     * Update check point
+     * @param userId
+     * @param diaryId
+     * @param data
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("UpdateCheckPoint")
+    Call<CommonResponse> updateDiaryCheckPoint(@Field("userId") String userId,
+                                                @Field("diaryId") String diaryId,
+                                                @Field("data") String data);
+
+
+    /**
      * Get all users checkpoint
      * @param userId
      * @param diaryId
@@ -206,4 +221,11 @@ public interface ApiInterface {
     @POST("GetAllCheckPoint")
     Call<GetAllCheckPoint> getAllCheckPoint(@Field("userId") String userId,
                                             @Field("diaryId") String diaryId);
+    //------SOS
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("Ping")
+    Call<CommonResponse> sendPing(@Field("userId") String userId,
+                                    @Field("teamId") String teamId,
+                                    @Field("pingCode") int pingCode);
 }

@@ -22,13 +22,10 @@ import com.example.bruce.myapp.Phongchat;
 import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.HistoryAndHobby.HistoryAndHobbyActivity;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -185,16 +182,6 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
         Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
         finish();
         startActivity(getIntent());
-    }
-
-    @Override
-    public void markMemberLocation(HashMap<String, MarkerOptions> listMemberLocation) {
-
-    }
-
-    @Override
-    public void markMemberLocationOnChanged(Marker memberMarker) {
-
     }
 
     @Override

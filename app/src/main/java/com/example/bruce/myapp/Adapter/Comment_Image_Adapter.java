@@ -5,10 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.example.bruce.myapp.R;
 import com.squareup.picasso.Callback;
@@ -34,7 +32,6 @@ public class Comment_Image_Adapter extends RecyclerView.Adapter<Comment_Image_Ad
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View mView = layoutInflater.inflate(R.layout.item_comment_image, parent, false);
-
         return new ViewHolder(mView);
     }
 

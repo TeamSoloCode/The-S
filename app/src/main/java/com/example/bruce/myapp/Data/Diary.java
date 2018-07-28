@@ -9,7 +9,7 @@ public class Diary {
     private String name;
     private String description;
     private String image;
-    private float createDate;
+    private long createDate;
     private String endDate;
     private String updateDate;
     private float distance;
@@ -32,7 +32,7 @@ public class Diary {
         this.image = image;
     }
 
-    public void setCreateDate(float createDate) {
+    public void setCreateDate(long createDate) {
         this.createDate = createDate;
     }
 
@@ -64,7 +64,7 @@ public class Diary {
         return image;
     }
 
-    public float getCreateDate() {
+    public long getCreateDate() {
         return createDate;
     }
 

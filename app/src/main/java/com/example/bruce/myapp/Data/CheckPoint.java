@@ -1,36 +1,81 @@
 package com.example.bruce.myapp.Data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 /**
  * Created by BRUCE on 7/15/2018.
  */
 
-public class CheckPoint {
+public class CheckPoint implements Parcelable {
     private String id;
     private double lat;
     private double log;
     private ArrayList<String> images;
     private String description;
-    private long createDate = System.currentTimeMillis();
-    private boolean deletePlag;
+    private long createDate;
+    private boolean deleteFlag;
 
-    public CheckPoint() {
-        this.images = new ArrayList<>();
-        this.images.add("https://www.google.com/logos/doodles/2018/childrens-day-2018-panama-venezuela-5562131071107072-2x.png");
-        this.images.add("https://www.google.com/logos/doodles/2014/emmeline-pankhursts-156th-birthday-5135289961938944-hp.jpg");
+    public CheckPoint() {}
+
+    protected CheckPoint(Parcel in) {
+        id = in.readString();
+        lat = in.readDouble();
+        log = in.readDouble();
+        images = in.createStringArrayList();
+        description = in.readString();
+        createDate = in.readLong();
+    }
+
+    public static final Creator<CheckPoint> CREATOR = new Creator<CheckPoint>() {
+        @Override
+        public CheckPoint createFromParcel(Parcel in) {
+            return new CheckPoint(in);
+        }
+
+        @Override
+        public CheckPoint[] newArray(int size) {
+            return new CheckPoint[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeDouble(lat);
+        dest.writeDouble(log);
+        dest.writeStringList(images);
+        dest.writeString(description);
+        dest.writeLong(createDate);
+    }
+
+    public LatLng toPosition(){
+        return new LatLng(this.lat, this.log);
     }
 
     public String getId() {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public boolean isDeletePlag() {
-        return deletePlag;
+        return deleteFlag;
     }
 
     public void setDeletePlag(boolean deletePlag) {
-        this.deletePlag = deletePlag;
+        this.deleteFlag = deletePlag;
     }
 
     public double getLat() {

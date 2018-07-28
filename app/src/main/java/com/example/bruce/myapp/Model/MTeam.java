@@ -13,9 +13,6 @@ import com.example.bruce.myapp.ApiGetObject.GetInvitersInfo;
 import com.example.bruce.myapp.ApiInterface;
 import com.example.bruce.myapp.Data.MemberLocation;
 import com.example.bruce.myapp.Presenter.Team.ITeam;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -300,84 +296,6 @@ public class MTeam {
     }
 
     /**
-     *
-     * @param listMemberLocation
-     * @param teamId
-     */
-    public void handleGetMemberLocation(HashMap<String, MarkerOptions> listMemberLocation, String teamId){
-        mTeamRef = FirebaseDatabase.getInstance().getReference("Team").child(teamId);
-        childEventListenerGetMemberLocation = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                MemberLocation memberLocation = dataSnapshot.getValue(MemberLocation.class);
-                listMemberLocation.get(dataSnapshot.getKey()).position(new LatLng(memberLocation.getLat(), memberLocation.getLog()));
-                callback.markMemberLocation(listMemberLocation);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        mTeamRef.addChildEventListener(childEventListenerGetMemberLocation);
-    }
-
-    /**
-     *
-
-     * @param listMemberLocation
-     */
-    public void handleMarkMemberLocationOnChange(HashMap<String, Marker> listMemberLocation){
-
-        childEventListenerMarkUserLocationChange = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                MemberLocation memberLocation = dataSnapshot.getValue(MemberLocation.class);
-                if(memberLocation != null){
-                    listMemberLocation.get(dataSnapshot.getKey()).setPosition(new LatLng(memberLocation.getLat(), memberLocation.getLog()));
-                    callback.markMemberLocationOnChanged(listMemberLocation.get(dataSnapshot.getKey()));
-                }
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        };
-        mTeamRef.addChildEventListener(childEventListenerMarkUserLocationChange);
-    }
-
-    /**
      * Post user's location to firebase database
      * @param userId
      * @param teamId
@@ -424,10 +342,13 @@ public class MTeam {
      * Detaching firebase listeners
      */
     public void handleDetachingListener(){
-        mTeamRef.removeEventListener(childEventListenerGetMemberLocation);
-        mTeamRef.removeEventListener(childEventListenerMarkUserLocationChange);
+        if(childEventListenerGetMemberLocation != null){
+            mTeamRef.removeEventListener(childEventListenerGetMemberLocation);
+        }
+        if(childEventListenerMarkUserLocationChange != null) {
+            mTeamRef.removeEventListener(childEventListenerMarkUserLocationChange);
+        }
     }
-
 
     public void handlePingToMyTeam(String problemName){
         FirebaseDatabase.getInstance().getReference(problemName).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Name").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());

@@ -24,7 +24,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -35,7 +34,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.MenumapAdapter;
+import com.example.bruce.myapp.CircleTransform;
 import com.example.bruce.myapp.Data.InvitersInfo;
+import com.example.bruce.myapp.Data.MemberLocation;
+import com.example.bruce.myapp.Data.Ping;
 import com.example.bruce.myapp.Data.TeamMember;
 import com.example.bruce.myapp.Data.TouristLocation;
 import com.example.bruce.myapp.Direction.DirectionFinder;
@@ -43,7 +45,6 @@ import com.example.bruce.myapp.Direction.DirectionFinderListener;
 import com.example.bruce.myapp.Direction.Route;
 import com.example.bruce.myapp.GPSTracker;
 import com.example.bruce.myapp.Model.MBigMap;
-import com.example.bruce.myapp.Model.MTeam;
 import com.example.bruce.myapp.Presenter.BigMap.PBigMap;
 import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
@@ -62,10 +63,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.koushikdutta.ion.Ion;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
 import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
 import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
@@ -77,6 +80,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import es.dmoral.toasty.Toasty;
 
@@ -109,11 +113,13 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
     private ProgressDialog progressDialog;
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private DatabaseReference mTeamRefGetMemberLocation;
+    private ChildEventListener childEventListenerGetMemberLocation;
+    private DatabaseReference mTeamRefTeamMemberPing;
+    private ChildEventListener childEventListenerTeamMemberPing;
 
     SharedPreferences mySharedPref;
     String teamId = "";
-
-    MTeam mTeam = new MTeam();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,38 +188,7 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         btnSOS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference("Help").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Name").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-                FirebaseDatabase.getInstance().getReference("CheckTeam").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).exists())
-                        {
-                            String idCaptain= dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Captain").getValue().toString();
-                            FirebaseDatabase.getInstance().getReference().child("TeamUser").child(idCaptain).child("member").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    for(DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
-                                    {
-                                        if(!dataSnapshot1.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()))
-                                        {
-                                            FirebaseDatabase.getInstance().getReference("Help").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Team").child(dataSnapshot1.getKey()).setValue("1");
-
-                                        }
-                                    }
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                pBigMap.receivedSendPing(user.getUid(), teamId, 0);
                 actionMenu.close(true);
             }
         });
@@ -223,7 +198,7 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
             @Override
             public void onClick(View v) {
                 //up ping len firebase
-                mTeam.handlePingToMyTeam("GasProblem");
+                pBigMap.receivedSendPing(user.getUid(), teamId, 1);
                 actionMenu.close(true);
             }
         });
@@ -232,7 +207,7 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
             @Override
             public void onClick(View v) {
                 //up ping len firebase
-                mTeam.handlePingToMyTeam("NeedRepair");
+                pBigMap.receivedSendPing(user.getUid(), teamId, 2);
                 actionMenu.close(true);
             }
         });
@@ -241,10 +216,23 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
             @Override
             public void onClick(View v) {
                 //up ping len firebase
-                mTeam.handlePingToMyTeam("Crash");
+                pBigMap.receivedSendPing(user.getUid(), teamId, 3);
                 actionMenu.close(true);
             }
         });
+    }
+
+    @Override
+    public void sendPing(int resultCode, String resultMessage) {
+        if(resultCode ==  2){
+            Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
+        }
+        else if(resultCode ==  311){
+            Toasty.info(this, resultMessage, Toast.LENGTH_SHORT).show();
+        }
+        else{
+            Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initialize(){
@@ -253,6 +241,44 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         txtToogle = findViewById(R.id.txtToogle);
         drawer = findViewById(R.id.drawer_map);
 
+    }
+
+    private void listenPingFromMember(String userId, String teamId){
+        mTeamRefTeamMemberPing = FirebaseDatabase.getInstance().getReference("Ping").child(teamId);
+        childEventListenerTeamMemberPing = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Ping ping = dataSnapshot.getValue(Ping.class);
+                if(ping != null){
+                    if(!userId.equals(ping.getUserId())){
+                        if(ping.getAddedTime() - 300000 <= System.currentTimeMillis()){
+                            String title = ping.getUserName() + " "
+                            sendNotification();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
     }
 
     /**
@@ -317,11 +343,10 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             notification = builder.build();
         }
-        notification.flags |=Notification.FLAG_AUTO_CANCEL;
-        notification.defaults|=Notification.DEFAULT_SOUND;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.defaults|= Notification.DEFAULT_SOUND;
         manager.notify(new Random().nextInt(),notification);
     }
-
 
     public static Bitmap createDrawableFromView(Context context, View view) {
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -356,6 +381,7 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         setupBottomSheet(mMap,listTouristLocation);
         return null;
     }
+
 
     /**
      * Hiển thị địa điển của user và tất cả địa điểm du lịch lên map
@@ -579,56 +605,111 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
      * @param resultMessage
      */
     @Override
-    public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
+    public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage){
         if(resultCode != 1){
+            if(resultCode == 114)
+                return;
+
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
 
+
+
+        CircleTransform circleTransform = new CircleTransform();
         HashMap<String, MarkerOptions> listMemberLocation = new HashMap<>();
         for(TeamMember teamMember : listTeamMember){
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.title(teamMember.getName());
             markerOptions.snippet(teamMember.getPhone());
+            //Code vẽ hình thành bitmap vòng tròn
+            try {
+                Bitmap adad = Ion.with(BigMapsActivity.this)
+                        .load(teamMember.getImage())
+                        .withBitmap()
+                        .asBitmap()
+                        .get();
+                Bitmap bitmap = circleTransform.transform(adad);
+
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
+                        Bitmap.createScaledBitmap(bitmap, 75, 75, true)));
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+//            Picasso.with(this).load(teamMember.getImage()).into(new Target() {
+//                @Override
+//                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+//                    Bitmap circleBitmap = circleTransform.transform(bitmap);
+//                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(
+//                            Bitmap.createScaledBitmap(circleBitmap, 75, 75, true)));
+//                }
+//
+//                @Override
+//                public void onBitmapFailed(Drawable errorDrawable) {
+//                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+//                }
+//
+//                @Override
+//                public void onPrepareLoad(Drawable placeHolderDrawable) {
+//
+//                }
+//            });
+
             markerOptions.position(new LatLng(999,999));
             listMemberLocation.put(teamMember.getId(), markerOptions);
         }
         //lấy danh sách thành viên trong team về
         if(!teamId.equals("")) {
-            pTeam.receivedGetMemberLocation(listMemberLocation,teamId);
-        }
-    }
+            HashMap<String, Marker> memberMarkers = new HashMap<>();
+            mTeamRefGetMemberLocation = FirebaseDatabase.getInstance().getReference("Team").child(teamId);
+            childEventListenerGetMemberLocation = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    MemberLocation memberLocation = dataSnapshot.getValue(MemberLocation.class);
+                    if(memberLocation != null){
+                        listMemberLocation.get(dataSnapshot.getKey()).position(new LatLng(memberLocation.getLat(), memberLocation.getLog()));
 
-    /**
-     * Mark location in first time
-     * @param listMemberLocation
-     */
-    @Override
-    public void markMemberLocation(HashMap<String, MarkerOptions> listMemberLocation) {
-        HashMap<String, Marker> memberMarkers = new HashMap<>();
-        for(String key: listMemberLocation.keySet()){
-            //không add marker của user lên mMap
-            if(key.equals(user.getUid())){
-                continue;
-            }
-            Marker memberMaker = mMap.addMarker(listMemberLocation.get(key));
-            memberMaker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-            memberMaker.setTag(key);
-            memberMarkers.put(key, memberMaker);
-        }
-        //đưa list user vào hàm mark để add zo firebase
-        pTeam.receivedMarkMemberLocation(memberMarkers);
-    }
+                        if(!dataSnapshot.getKey().equals(user.getUid())){
+                            Marker memberMaker = mMap.addMarker(listMemberLocation.get(dataSnapshot.getKey()));
+                            //memberMaker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                            memberMaker.setTag(dataSnapshot.getKey());
+                            memberMarkers.put(dataSnapshot.getKey(), memberMaker);
+                        }
+                    }
+                }
 
-    /**
-     * Remark user when user's location changed
-     * @param memberMarker
-     */
-    @Override
-    public void markMemberLocationOnChanged(Marker memberMarker) {
-        //set new position into member marker location
-        memberMarker.setPosition(memberMarker.getPosition());
-        Log.i("asdf", memberMarker.getPosition().toString());
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    MemberLocation memberLocation = dataSnapshot.getValue(MemberLocation.class);
+                    if(memberLocation != null && !dataSnapshot.getKey().equals(user.getUid())){
+                        memberMarkers.get(dataSnapshot.getKey()).setPosition(new LatLng(memberLocation.getLat(), memberLocation.getLog()));
+                    }
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    MemberLocation memberLocation = dataSnapshot.getValue(MemberLocation.class);
+                    if(memberLocation != null && !dataSnapshot.getKey().equals(user.getUid())){
+                        memberMarkers.get(dataSnapshot.getKey()).remove();
+                    }
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            mTeamRefGetMemberLocation.addChildEventListener(childEventListenerGetMemberLocation);
+        }
     }
 
     @Override
@@ -666,12 +747,18 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
     public void isLeader(int resultCode, String resultMessage) {
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        pTeam.detachingFirebaseListener();
+        mTeamRefGetMemberLocation.removeEventListener(childEventListenerGetMemberLocation);
     }
-
     //    @Override
 //    public void addMakerMember(String key,GeoLocation location,DataSnapshot dataSnapshot) {
 //        View marker = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.custom_marker_layout, null);

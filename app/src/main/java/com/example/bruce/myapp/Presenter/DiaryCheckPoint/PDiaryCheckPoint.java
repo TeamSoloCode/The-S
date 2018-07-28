@@ -25,4 +25,13 @@ public class PDiaryCheckPoint implements IDiaryCheckPoint {
     public void addDiaryCheckPoint(int resultCode, String resultMessage) {
         callbackToView.addDiaryCheckPoint(resultCode, resultMessage);
     }
+
+    public void receivedUpdateNewCheckPoint(String userId, String diaryId, CheckPoint checkPoint){
+        model.updateDiaryCheckPoint(userId,diaryId,checkPoint);
+    }
+
+    @Override
+    public void updateDiaryCheckPoint(int resultCode, String resultMessage) {
+        callbackToView.updateDiaryCheckPoint(resultCode, resultMessage);
+    }
 }
