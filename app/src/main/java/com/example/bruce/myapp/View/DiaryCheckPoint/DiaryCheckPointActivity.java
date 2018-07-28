@@ -100,7 +100,9 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
     }
 
     public void renderData(CheckPoint checkPoint){
-        LinearLayoutManager layoutManager = new LinearLayoutManager(DiaryCheckPointActivity.this);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(DiaryCheckPointActivity.this,
+                LinearLayoutManager.HORIZONTAL,
+                false);
         recyclerViewCheckPointImages.setLayoutManager(layoutManager);
         checkPointAdapter = new Comment_Image_Adapter(getApplicationContext(), checkPoint.getImages());
         recyclerViewCheckPointImages.setAdapter(checkPointAdapter);
