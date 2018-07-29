@@ -16,14 +16,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.Comment_Image_Adapter;
-import com.example.bruce.myapp.AddMissingLocation;
 import com.example.bruce.myapp.Data.CheckPoint;
 import com.example.bruce.myapp.GPSTracker;
 import com.example.bruce.myapp.Presenter.DiaryCheckPoint.PDiaryCheckPoint;
@@ -39,10 +37,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import es.dmoral.toasty.Toasty;
 
@@ -52,7 +47,6 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
     private EditText edtDiscription;
     private RecyclerView recyclerViewCheckPointImages;
     private Comment_Image_Adapter checkPointAdapter;
-    private ArrayList<String> imageStorageRef;
 
     private FirebaseUser user;
     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -64,22 +58,19 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
     private String mode;
     private GPSTracker gpsTracker;
 
-
-    private int PICK_IMAGE_REQUEST = 1;
     private String userChoosenTask;
     private int REQUEST_CAMERA = 555, SELECT_FILE = 666;
-    Uri filePath;
-    ArrayList<Uri> imageUri;
-    ArrayList<String> imagesPost;
+    private Uri filePath;
+    private ArrayList<Uri> imageUri;
+    private ArrayList<String> imagesPost;
+    private int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_check_point);
-
-        imageStorageRef = new ArrayList<>();
-        imageUri=new ArrayList<>();
-        imagesPost=new ArrayList<>();
+        imageUri = new ArrayList<>();
+        imagesPost = new ArrayList<>();
 
         initialize();
         getDataFromIntent();
@@ -123,7 +114,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
                 LinearLayoutManager.HORIZONTAL,
                 false);
         recyclerViewCheckPointImages.setLayoutManager(layoutManager);
-        imagesPost=checkPoint.getImages();
+        imagesPost = checkPoint.getImages();
         checkPointAdapter = new Comment_Image_Adapter(getApplicationContext(), imagesPost);
         recyclerViewCheckPointImages.setAdapter(checkPointAdapter);
         //checkPointAdapter.setClickListenerRecyclerView(this);
@@ -135,9 +126,6 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         switch (v.getId()){
             case R.id.btnSaveChanges:
                 if(mode.equals("add")){
-                    if(edtDiscription.length() > 0){
-                        checkPoint.setDescription(edtDiscription.getText().toString());
-                    }
                     if(gpsTracker.canGetLocation()){
                         checkPoint.setLat(gpsTracker.getLatitude());
                         checkPoint.setLog(gpsTracker.getLongtitude());
@@ -147,18 +135,14 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
                         return;
                     }
                     checkPoint.setDeletePlag(false);
-                    checkPoint.setImages(checkPoint.getImages());
                     checkPoint.setCreateDate(System.currentTimeMillis());
 
                     if(edtDiscription.length() == 0){
                         Toasty.info(this,"Discription can not be empty", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    pDiaryCheckPoint.receivedAddNewCheckPoint(
-                            user.getUid(),
-                            diaryId,
-                            checkPoint);
+                    checkPoint.setDescription(edtDiscription.getText().toString());
+                    upload();
                 }
                 else if(mode.equals("update")){
                     if(edtDiscription.length() == 0){
@@ -167,20 +151,14 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
                     }
                     else
                     {
+                        checkPoint.setDescription(edtDiscription.getText().toString());
                         upload();
                     }
-
                 }
                 break;
             case R.id.btnAddCheckPointsPic:
                 selectImage();
-//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//                // Show only images, no videos or anything else
-//                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//                intent.setType("image/*");
-//                // Always show the chooser (if there are multiple options available)
-//                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-//                break;
+                break;
         }
     }
 
@@ -237,66 +215,6 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
                 checkPointAdapter.notifyDataSetChanged();
             }
         }
-//        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            storageRef = storage.getReference();
-//            Uri uri = data.getData();
-//            try {
-//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-//                String imgRef = "Image/CheckPoint/"+user.getEmail()+"/"+diaryId+"/"+System.currentTimeMillis();
-//                StorageReference userImageRef = storageRef.child(imgRef);
-//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//
-//                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-//                byte[] data1 = baos.toByteArray();
-//
-//                UploadTask uploadTask = userImageRef.putBytes(data1);
-//
-//                if(checkPoint != null && checkPoint.getImages() != null){
-//                    if(checkPoint.getImages().size() <= 19){
-//                        uploadTask.addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception exception) {
-//                                // Handle unsuccessful uploads
-//                            }
-//                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-//                                if(taskSnapshot.getDownloadUrl() != null){
-//                                    checkPoint.getImages().add(taskSnapshot.getDownloadUrl().toString());
-//                                    checkPointAdapter.notifyDataSetChanged();
-//                                    imageStorageRef.add(imgRef);
-//                                }
-//                            }
-//                        });
-//                    }
-//                    else {
-//                        Toasty.warning(this, "Can't add more than 20 images in a check point",Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//                else{
-//                    uploadTask.addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception exception) {
-//                            // Handle unsuccessful uploads
-//                        }
-//                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-//                            if(taskSnapshot.getDownloadUrl() != null){
-//                                checkPoint.getImages().add(taskSnapshot.getDownloadUrl().toString());
-//                                checkPointAdapter.notifyDataSetChanged();
-//                                imageStorageRef.add(imgRef);
-//                            }
-//                        }
-//                    });
-//                }
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
     }
 
     @Override
@@ -305,7 +223,6 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
-        imageStorageRef.clear();
         Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
     }
 
@@ -315,7 +232,6 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
-        imageStorageRef.clear();
         Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
     }
 
@@ -328,15 +244,6 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(imageStorageRef.size() > 0){
-            for(String imageUrl : imageStorageRef){
-                storageRef.child(imageUrl).delete();
-            }
-        }
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -381,26 +288,36 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         String path = MediaStore.Images.Media.insertImage(getApplication().getContentResolver(), thumbnail, "Title", null);
         imagesPost.add(Uri.parse(path).toString());
         imageUri.add(Uri.parse(path));
-        //code add hinh len firebase o day
         checkPointAdapter.notifyDataSetChanged();
     }
+
     private void upload() {
         if(imageUri!=null) {
             storageRef = storage.getReference();
-            for(int i=0;i<imageUri.size();i++){
-                Uri fipath=imageUri.get(i);
+            for(Uri filePath : imageUri){
+                count++;
+                Uri fipath = filePath;
                 String imgRef = "Image/CheckPoint/"+user.getEmail()+"/"+diaryId+"/"+System.currentTimeMillis();
                 StorageReference userImageRef = storageRef.child(imgRef);
                 userImageRef.putFile(fipath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        checkPoint.setDescription(edtDiscription.getText().toString());
                         checkPoint.getImages().add(taskSnapshot.getDownloadUrl().toString());
-                        pDiaryCheckPoint.receivedUpdateNewCheckPoint(
-                                user.getUid(),
-                                diaryId,
-                                checkPoint);
-                        //mData.child("Img_Comment").child(key).push().setValue(taskSnapshot.getDownloadUrl().toString());
+                        if(count == imageUri.size()){
+                            if(mode.equals("update")){
+                                pDiaryCheckPoint.receivedUpdateCheckPoint(
+                                        user.getUid(),
+                                        diaryId,
+                                        checkPoint);
+                            }
+                            else if(mode.equals("add")){
+                                pDiaryCheckPoint.receivedAddNewCheckPoint(
+                                        user.getUid(),
+                                        diaryId,
+                                        checkPoint);
+                            }
+                            count = 0;
+                        }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override

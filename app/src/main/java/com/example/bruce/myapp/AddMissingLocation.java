@@ -89,7 +89,7 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
         mStorageRef=storage.getReference();
         arrImg=new ArrayList<>();
         checkError();
-        rvAddImg=findViewById(R.id.rvAddMissingLocation);
+        rvAddImg = findViewById(R.id.rvAddMissingLocation);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false);
         rvAddImg.setLayoutManager(layoutManager);
         imagesPost=new ArrayList<>();
@@ -176,13 +176,13 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
     }
 
     private void initialize() {
-        btnAddImage=findViewById(R.id.btnAddImage);
-        imga=findViewById(R.id.imga);
-        edtAddress=findViewById(R.id.edtAddress);
-        edtPlaceName=findViewById(R.id.edtPlaceName);
-        edtDescribe=findViewById(R.id.edtDescribe);
-        edtKind=findViewById(R.id.edtKind);
-        edtPhone=findViewById(R.id.edtPhone);
+        btnAddImage = findViewById(R.id.btnAddImage);
+        imga = findViewById(R.id.imga);
+        edtAddress = findViewById(R.id.edtAddress);
+        edtPlaceName = findViewById(R.id.edtPlaceName);
+        edtDescribe = findViewById(R.id.edtDescribe);
+        edtKind = findViewById(R.id.edtKind);
+        edtPhone = findViewById(R.id.edtPhone);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
