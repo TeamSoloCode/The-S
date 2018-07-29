@@ -275,21 +275,12 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
             for(int i = 0 ;i < mClipData.getItemCount(); i++){
                 ClipData.Item item = mClipData.getItemAt(i);
                 filePath = item.getUri();
-                imagesPost.add(filePath.toString());
-                imageUri.add(filePath);
+                if(imagesPost.contains(filePath.toString())) {
+                    imagesPost.add(filePath.toString());
+                    imageUri.add(filePath);
+                }
             }
         }
-        Set<String> hs = new HashSet<>();
-        hs.addAll(imagesPost);
-        imagesPost.clear();
-        imagesPost.addAll(hs);
-
-        //Uri tra? len firebase
-        Set<Uri> hs1 = new HashSet<>();
-        hs1.addAll(imageUri);
-        imageUri.clear();
-        imageUri.addAll(hs1);
-
         rvAddImg.setAdapter(adapterImage);
     }
 

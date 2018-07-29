@@ -38,7 +38,7 @@ public class Comment_Image_Adapter extends RecyclerView.Adapter<Comment_Image_Ad
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final String image_link = listImageComment.get(position);
-        Picasso.with(context).load(image_link).into(holder.imageView_Comment, new Callback() {
+        Picasso.with(context).load(image_link).fit().into(holder.imageView_Comment, new Callback() {
             @Override
             public void onSuccess() {
 
