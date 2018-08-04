@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+import dmax.dialog.SpotsDialog;
 import es.dmoral.toasty.Toasty;
 
 public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.RecyclerViewClicklistener,
@@ -34,6 +35,7 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     private PMyDiary pDiary = new PMyDiary(this);
     private RelativeLayout relativeLayoutNotification, relativeLayoutLoading;
     private Button btnAddNewDiary;
+    private SpotsDialog loadDaTaDialog;
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     @Override
@@ -43,6 +45,10 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
         initialize();
 
         btnAddNewDiary.setOnClickListener(this);
+
+        loadDaTaDialog = new SpotsDialog(this);
+        loadDaTaDialog.show();
+
         //get all user's diary
         pDiary.receivedGetAllMyDiary(user.getUid());
     }
@@ -73,6 +79,7 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
 
     @Override
     public void getAllMyDiary(int resultCode, ArrayList<Diary> listMyDiary, String resultMessage) {
+        loadDaTaDialog.dismiss();
         if(resultCode != 1){
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;

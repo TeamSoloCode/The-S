@@ -52,4 +52,13 @@
     <string name="MessageKindgoryNull">Please enter the category of your place</string>
     <string name="MessageAddressNull">Please enter the address of your place</string>
     <string name="MessageCoordinatesNull">Please click on the map above to select coordinates</string>
+
+    <string-array name="checkpoint_kind_array">
+        <item>Restaurant</item>
+        <item>View</item>
+        <item>Hotel</item>
+        <item>Park</item>
+        <item>Camp</item>
+        <item>Stop station</item>
+    </string-array>
 </resources>

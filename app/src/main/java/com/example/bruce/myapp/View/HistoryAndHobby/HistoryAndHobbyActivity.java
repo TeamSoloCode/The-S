@@ -141,69 +141,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
         }else if(Language.equals("Tiếng Việt")){
             Toast.makeText(this, "Tiếng việt", Toast.LENGTH_SHORT).show();
         }
-//        FirebaseDatabase.getInstance().getReference("Help").addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                String nameNeedHelp=dataSnapshot.child("Name").getValue().toString();
-//                String key=dataSnapshot.getKey();
-//                FirebaseDatabase.getInstance().getReference("Help").child(dataSnapshot.getKey()).child("Team").addChildEventListener(new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                        if(dataSnapshot.getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-////                            dataSnapshot.getRef().removeValue();
-//                            Log.d("sadsad",nameNeedHelp);
-//                            Intent intent = new Intent(getApplicationContext(), TeamSupportActivity.class);
-//                            intent.putExtra("NameNeedHelp",nameNeedHelp);
-//                            intent.putExtra("key",key);
-//                            intent.putExtra("userId",dataSnapshot.getKey());
-//                            startActivity(intent);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-//                        Log.d("ádasds",dataSnapshot.getKey());
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//
-//                    }
-//                });
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-    setMenuDefault();
+        setMenuDefault();
     }
 
     private void interfaceFacebookUser(FirebaseUser user, ImageView imgFriendProfilePicture, TextView txtEmail, TextView txtGreeting){
@@ -235,11 +173,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String value = (String) listView.getItemAtPosition(position);
-                if(value == getString(R.string.Logout))
-                {
-                    pMenuFragment.receivedLogout();
-                }
-                else if(value == getString(R.string.Map)){
+                if(value == getString(R.string.Map)){
                     Intent target = new Intent(HistoryAndHobbyActivity.this, BigMapsActivity.class);
                     target.putParcelableArrayListExtra("allLocation",allLocation);
                     startActivity(target);
@@ -377,7 +311,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
             return true;
         }
         else if(id==R.id.btnlogout){
-
+            pMenuFragment.receivedLogout();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -593,14 +527,15 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
     public void leaveMyTeam(int resultCode, String resultMessage) {
 
     }
+
     public void setMenuDefault(){
         listMenu=new ArrayList<>();
         listMenu.add(getString(R.string.MyProfile));
         listMenu.add(getString(R.string.Map));
         listMenu.add(getString(R.string.Invitation_List));
         listMenu.add(getString(R.string.Diary));
-        listMenu.add(getString(R.string.Logout));
         listMenu.add(getString(R.string.AddMissingLocation));
+
     listViewAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1,
                 listMenu);

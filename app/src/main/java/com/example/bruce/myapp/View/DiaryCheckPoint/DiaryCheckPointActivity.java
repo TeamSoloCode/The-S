@@ -17,8 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.Comment_Image_Adapter;
@@ -47,6 +49,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
     private EditText edtDiscription;
     private RecyclerView recyclerViewCheckPointImages;
     private Comment_Image_Adapter checkPointAdapter;
+    private Spinner spnCheckPointKind;
 
     private FirebaseUser user;
     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -86,6 +89,8 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         btnAddImage.setOnClickListener(this);
         user = FirebaseAuth.getInstance().getCurrentUser();
         gpsTracker = new GPSTracker(this);
+
+        setupSpinner(spnCheckPointKind);
     }
 
     private void initialize(){
@@ -93,6 +98,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         btnSaveChanges = findViewById(R.id.btnSaveChanges);
         edtDiscription = findViewById(R.id.edtCheckPointDiscription);
         recyclerViewCheckPointImages = findViewById(R.id.recyclerView_CheckPointImage);
+        spnCheckPointKind = findViewById(R.id.spnCheckPoint);
     }
 
     private void getDataFromIntent(){
@@ -119,6 +125,16 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         recyclerViewCheckPointImages.setAdapter(checkPointAdapter);
         //checkPointAdapter.setClickListenerRecyclerView(this);
         checkPointAdapter.notifyDataSetChanged();
+    }
+
+    private void setupSpinner(Spinner spinner){
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.checkpoint_kind_array, R.layout.item_spinner_checkpoint_kind);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
     }
 
     @Override
