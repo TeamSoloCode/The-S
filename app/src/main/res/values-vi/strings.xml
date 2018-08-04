@@ -42,4 +42,13 @@
     <string name="MessageKindgoryNull">Vui lòng nhập loại địa điểm của bạn</string>
     <string name="MessageAddressNull">Vui lòng nhập địa chỉ của địa điểm của bạn </string>
     <string name="MessageCoordinatesNull">Vui lòng nhấp vào bản đồ ở trên để chọn tọa độ</string>
+    <string name="LeaveTeam">Rời đội</string>
+
+    <string-array name="checkpoint_kind_array">
+        <item>Quang cảnh</item>
+        <item>Khách sạn</item>
+        <item>Công viên</item>
+        <item>Điểm cắm trại</item>
+        <item>Quán ăn ngon</item>
+    </string-array>
 </resources>

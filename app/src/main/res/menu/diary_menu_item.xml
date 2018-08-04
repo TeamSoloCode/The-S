@@ -3,6 +3,6 @@
 xmlns:android="http://schemas.android.com/apk/res/android">
 
 <item
-    android:title="My diaries"
-    android:id="@+id/btnToMyDiaries"></item>
+    android:title="Add new"
+    android:id="@+id/btnMnAddNewDiary"></item>
 </menu>
