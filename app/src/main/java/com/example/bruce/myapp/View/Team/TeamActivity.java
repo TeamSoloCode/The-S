@@ -152,7 +152,7 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
 
     @Override
     public void isLeader(int resultCode, String resultMessage) {
-        if(resultCode == 117){
+        if(resultCode == 117) {
             btnInvite.setVisibility(View.VISIBLE);
             edtInvite.setVisibility(View.VISIBLE);
             linear.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;

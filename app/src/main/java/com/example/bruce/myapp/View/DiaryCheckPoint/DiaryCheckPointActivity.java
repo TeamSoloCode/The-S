@@ -43,7 +43,8 @@ import java.util.ArrayList;
 
 import es.dmoral.toasty.Toasty;
 
-public class DiaryCheckPointActivity extends AppCompatActivity implements View.OnClickListener,IViewDiaryCheckPoint {
+public class DiaryCheckPointActivity extends AppCompatActivity implements View.OnClickListener,IViewDiaryCheckPoint,
+        AdapterView.OnItemSelectedListener{
 
     private Button btnSaveChanges, btnAddImage;
     private EditText edtDiscription;
@@ -135,6 +136,17 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Toasty.info(this, position + "", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        
     }
 
     @Override
@@ -338,6 +350,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+
                     }
                 });
             }
@@ -346,5 +359,4 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         }
 
     }
-
 }

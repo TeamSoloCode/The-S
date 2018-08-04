@@ -95,7 +95,7 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
         tls = new ArrayList<>();
         imagePost = new ArrayList<>();
         //set up rating bar
-        //ratingBar.setRating(tls.get(0).getStars());
+        ratingBar.setRating(tls.get(0).getStars());
         setDialogRate(btnRate, InformationAndCommentsActivity.this);
         onClickFabComment();
     }
@@ -391,7 +391,7 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
         txtTitle.setMaxLines(1);
         //chấm 3 chấm nếu tiêu đề quá dài
         txtTitle.setEllipsize(TextUtils.TruncateAt.END);
-        //txtTitle.setText(tls.get(0).getLocationName());
+        txtTitle.setText(tls.get(0).getName());
     }
 
     private void setupViewPager(ViewPager viewPager) {
