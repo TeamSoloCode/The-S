@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +41,7 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
     Button btnchonRoom;
     LinearLayout linear;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private String teamId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +80,7 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
 
 
         SharedPreferences sharedPref = this.getSharedPreferences("my_data", MODE_PRIVATE);
-        String teamId = sharedPref.getString("teamId","");
+         teamId = sharedPref.getString("teamId","");
         if(!teamId.equals("")){
             //Thức hiện gọi api kiểm tra user có phải lá leader của team hay không
             pTeam.receivedIsLeader(user.getUid(), teamId, this);
@@ -178,10 +181,8 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
-
         Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
         finish();
-        startActivity(getIntent());
     }
 
     @Override
@@ -214,5 +215,22 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
     @Override
     public void hasTeam(int resultCode, String resultMessage) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_team, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.btnLeaveTeam:
+                pTeam.receivedLeaveMyTeam(user.getUid(),teamId,this);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

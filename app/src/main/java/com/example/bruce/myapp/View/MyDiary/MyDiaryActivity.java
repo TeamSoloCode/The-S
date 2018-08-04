@@ -121,10 +121,8 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (item.getItemId()){
-            case R.id.btnToMyDiaries:
-                Intent intent = new Intent(this,DiaryActivity.class);
-                startActivity(intent);
-                finish();
+            case R.id.btnMnAddNewDiary:
+                pDiary.receivedCreateDiary(user.getUid());
                 break;
         }
         return super.onOptionsItemSelected(item);
