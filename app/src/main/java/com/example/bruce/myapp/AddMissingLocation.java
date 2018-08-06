@@ -26,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -53,6 +54,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import es.dmoral.toasty.Toasty;
 
 
 public class AddMissingLocation extends AppCompatActivity implements AddMissingLocationAdapter.RecyclerViewClicklistener {
@@ -275,13 +278,13 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
             for(int i = 0 ;i < mClipData.getItemCount(); i++){
                 ClipData.Item item = mClipData.getItemAt(i);
                 filePath = item.getUri();
-                if(imagesPost.contains(filePath.toString())) {
+                if(!imagesPost.contains(filePath.toString())) {
                     imagesPost.add(filePath.toString());
                     imageUri.add(filePath);
                 }
             }
         }
-        rvAddImg.setAdapter(adapterImage);
+        adapterImage.notifyDataSetChanged();
     }
 
     private void onCaptureImageResult(Intent data) {
@@ -332,6 +335,8 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId()==R.id.save_place){
             //xu ly tra du lieu len web gom address,log,lat, name ,edtPlaceName.txt,edtKind.txt,edtPhone.txt,edtDescribe.txt,   images
+            Toasty.success(this, getString(R.string.MessageAddLocationSuccess), Toast.LENGTH_SHORT).show();
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

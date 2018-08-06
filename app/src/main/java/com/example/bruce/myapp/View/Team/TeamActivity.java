@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
 import es.dmoral.toasty.Toasty;
 
 public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAdapter.RecyclerViewClicklistener{
@@ -42,11 +43,14 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
     LinearLayout linear;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private String teamId;
+    private SpotsDialog loadDaTaDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
         initialize();
+        loadDaTaDialog = new SpotsDialog(this);
+        loadDaTaDialog.show();
         //Hiển thị Danh sách User lên recyclerView
         //pTeam.receivedAddListUser(teamAdapter,listUser);
         //Get invitation realtime
@@ -164,6 +168,7 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
 
     @Override
     public void getAllTeamMember(int resultCode, ArrayList<TeamMember> listTeamMember, String resultMessage) {
+        loadDaTaDialog.dismiss();
         if(resultCode != 1){
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
@@ -177,12 +182,15 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
 
     @Override
     public void leaveMyTeam(int resultCode, String resultMessage) {
+        loadDaTaDialog.dismiss();
         if(resultCode != 2){
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
-        Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
         finish();
+        Intent intent = new Intent(TeamActivity.this,HistoryAndHobbyActivity.class);
+        startActivity(intent);
+
     }
 
     @Override
@@ -228,6 +236,7 @@ public class TeamActivity extends AppCompatActivity implements IViewTeam,TeamAda
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnLeaveTeam:
+                loadDaTaDialog.show();
                 pTeam.receivedLeaveMyTeam(user.getUid(),teamId,this);
                 break;
         }

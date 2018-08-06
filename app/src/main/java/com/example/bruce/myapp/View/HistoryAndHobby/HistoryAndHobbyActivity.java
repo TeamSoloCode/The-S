@@ -187,6 +187,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                 }
                 else if(value==getString(R.string.Team))
                 {
+                    finish();
                     Intent target = new Intent(HistoryAndHobbyActivity.this, TeamActivity.class);
                     startActivity(target);
                 }
@@ -212,6 +213,7 @@ public class HistoryAndHobbyActivity extends AppCompatActivity implements IViewH
                     });
                 }
                 else if(value.equals(getString(R.string.Invitation_List))){
+                    finish();
                     Intent intent = new Intent(HistoryAndHobbyActivity.this, ListInvitationActvity.class);
                     startActivity(intent);
                 }

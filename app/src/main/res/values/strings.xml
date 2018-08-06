@@ -53,6 +53,7 @@
     <string name="MessageAddressNull">Please enter the address of your place</string>
     <string name="MessageCoordinatesNull">Please click on the map above to select coordinates</string>
     <string name="LeaveTeam">Leave Team</string>
+    <string name="MessageAddLocationSuccess">Add successful, we will check back, thank you for your contribution</string>
 
     <string-array name="checkpoint_kind_array">
         <item>View</item>

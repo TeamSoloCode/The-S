@@ -1,5 +1,6 @@
 package com.example.bruce.myapp.View.Invitation;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,7 +13,9 @@ import com.example.bruce.myapp.Data.InvitersInfo;
 import com.example.bruce.myapp.Data.TeamMember;
 import com.example.bruce.myapp.Presenter.Team.PTeam;
 import com.example.bruce.myapp.R;
+import com.example.bruce.myapp.View.HistoryAndHobby.HistoryAndHobbyActivity;
 import com.example.bruce.myapp.View.Team.IViewTeam;
+import com.example.bruce.myapp.View.Team.TeamActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -24,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
 import es.dmoral.toasty.Toasty;
 
 public class ListInvitationActvity extends AppCompatActivity implements IViewTeam, ListInvitationAdapter.RecyclerViewClicklistener {
@@ -34,12 +38,14 @@ public class ListInvitationActvity extends AppCompatActivity implements IViewTea
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private ChildEventListener childEventListenerInvitation;
     private DatabaseReference mDatabaseRef;
-
+    private SpotsDialog loadDaTaDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_invitation);
         initialize();
+        loadDaTaDialog = new SpotsDialog(this);
+        loadDaTaDialog.show();
         //Get invitation realtime
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Invitation").child(user.getUid());
         childEventListenerInvitation = new ChildEventListener() {
@@ -77,6 +83,7 @@ public class ListInvitationActvity extends AppCompatActivity implements IViewTea
 
     @Override
     public void getInvitersInfo(int resultCode, List<InvitersInfo> invitersInfo, String resultMessage) {
+        loadDaTaDialog.dismiss();
         ArrayList<InvitersInfo> listInvitersInfo = (ArrayList<InvitersInfo>) invitersInfo;
         recyclerViewInvitation.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
         listInvitationAdapter = new ListInvitationAdapter(listInvitersInfo, this);
@@ -94,6 +101,9 @@ public class ListInvitationActvity extends AppCompatActivity implements IViewTea
     public void acceptInvitation(int resultCode, String resultMessage) {
         if(resultCode == 002){
             Toasty.success(this, resultMessage, Toast.LENGTH_LONG).show();
+            finish();
+            Intent intent=new Intent(this, HistoryAndHobbyActivity.class);
+            startActivity(intent);
         }
         else if(resultCode == 111){
             Toasty.warning(this, resultMessage, Toast.LENGTH_LONG).show();
@@ -135,5 +145,12 @@ public class ListInvitationActvity extends AppCompatActivity implements IViewTea
     @Override
     public void leaveMyTeam(int resultCode, String resultMessage) {
 
+    }
+    
+    @Override
+    public void onBackPressed() {
+        finish();
+        startActivity(new Intent(getApplicationContext(), HistoryAndHobbyActivity.class));
+        super.onBackPressed();
     }
 }

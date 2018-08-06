@@ -43,6 +43,7 @@
     <string name="MessageAddressNull">Vui lòng nhập địa chỉ của địa điểm của bạn </string>
     <string name="MessageCoordinatesNull">Vui lòng nhấp vào bản đồ ở trên để chọn tọa độ</string>
     <string name="LeaveTeam">Rời đội</string>
+    <string name="MessageAddLocationSuccess">Thêm thành công, chúng tôi sẽ kiểm tra lại, cảm ơn bạn đã đóng góp</string>
 
     <string-array name="checkpoint_kind_array">
         <item>Quang cảnh</item>

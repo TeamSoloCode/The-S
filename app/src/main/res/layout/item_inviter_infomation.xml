@@ -76,7 +76,8 @@
                 android:id="@+id/imgAccept"
                 android:layout_width="30dp"
                 android:layout_height="20dp"
-                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="5dp"
                 android:layout_alignRight="@+id/infoInviter" />
 
         </RelativeLayout>
