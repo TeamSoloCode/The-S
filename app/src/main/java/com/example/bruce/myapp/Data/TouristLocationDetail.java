@@ -5,14 +5,14 @@ package com.example.bruce.myapp.Data;
  */
 
 public class TouristLocationDetail {
-    private String imageUrl;
+    private String image;
     private String description;
 
     public TouristLocationDetail() {
     }
 
     public String getImageUrl() {
-        return imageUrl;
+        return image;
     }
 
     public String getDescription() {

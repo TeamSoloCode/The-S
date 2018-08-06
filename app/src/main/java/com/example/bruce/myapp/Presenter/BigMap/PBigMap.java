@@ -16,7 +16,6 @@ public class PBigMap implements IBigMap {
     private IViewBigMap callbackToView;
 
     public PBigMap(IViewBigMap callbackToView) {
-
         this.callbackToView = callbackToView;
     }
 

@@ -12,22 +12,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.Data.Comment;
+import com.example.bruce.myapp.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
-
-
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by BRUCE on 8/31/2017.
@@ -35,14 +30,17 @@ import java.util.ArrayList;
 
 public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHolder> implements Comment_Image_Adapter.RecyclerViewClicklistener {
 
-    ArrayList<Comment> comment_contructors = new ArrayList<>();
-    Context context;
-    RecyclerViewClicklistener itemClickListener;
-    DatabaseReference mDataLike= FirebaseDatabase.getInstance().getReference();
-    FirebaseAuth mAuth= FirebaseAuth.getInstance();
+    private ArrayList<Comment> comments = new ArrayList<>();
+    private Context context;
+    private RecyclerViewClicklistener itemClickListener;
+    private FirebaseAuth mAuth= FirebaseAuth.getInstance();
+    private SimpleDateFormat sdf;
+    private Calendar calendar;
+
     boolean check;
+
     public Comment_Adapter(ArrayList<Comment> comment_contructors, Context context) {
-        this.comment_contructors = comment_contructors;
+        this.comments = comment_contructors;
         this.context = context;
     }
 
@@ -51,6 +49,9 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View mView = layoutInflater.inflate(R.layout.item_comment,parent,false);
 
+        sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+        calendar = Calendar.getInstance();
+
         return new ViewHolder(mView);
     }
 
@@ -58,69 +59,40 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
 
        //xử lý sự kiện click likebutton
+        Comment cC = comments.get(position);
 
-        Comment cC = comment_contructors.get(position);
+        //ClickButtonLike(holder.btnLike,holder.txtLikeNumber,comments.get(position).getCommentId(),context,cC);
 
-        ClickButtonLike(holder.btnLike,holder.txtLikeNumber,comment_contructors.get(position).getCommentID(),context,cC);
+        holder.txtComment.setText(cC.getComment());
 
-        holder.txtComment.setText(cC.comment);
-        holder.txtDateOfComment.setText(cC.date);
-        holder.txtUsername.setText(cC.userName);
-        holder.txtLikeNumber.setText(String.valueOf(cC.getLikeCount()));
+        calendar.setTimeInMillis(cC.getAddedDate());
+        holder.txtDateOfComment.setText(sdf.format(calendar.getTime()));
 
 
-        Picasso.with(context).load(cC.userImage).into(holder.userImage);
+        holder.txtUsername.setText(cC.getUserName());
+        holder.txtLikeNumber.setText(String.valueOf(cC.getLike()));
+
+
+        Picasso.with(context).load(cC.getUserImage()).into(holder.userImage);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false);
 
         holder.recyclerView_Comment_Image.setLayoutManager(layoutManager);
-        holder.adapter_comment_image = new Comment_Image_Adapter(context,cC.commentImages);
+        holder.adapter_comment_image = new Comment_Image_Adapter(context,cC.getImage());
         holder.adapter_comment_image.setClickListener(this);
         holder.recyclerView_Comment_Image.setAdapter(holder.adapter_comment_image);
         holder.adapter_comment_image.notifyDataSetChanged();
+
+        //enable hay disale button like
         setViewLiked(holder,position);
-
-
-
-
     }
-    public void setViewLiked(ViewHolder holder,int position){
-        mDataLike.child("Likes").child(mAuth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(comment_contructors.get(position).getCommentID().equals(dataSnapshot.getKey())){
-                    check=true;
-                    holder.txtUsername.setText(comment_contructors.get(position).getUserName());
-                    holder.txtComment.setText(comment_contructors.get(position).getComment());
-                    if(check==true){
-                        holder.btnLike.setLiked(true);
-                    }
-                    else{
-                        holder.btnLike.setLiked(false);
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    private void setViewLiked(ViewHolder holder,int position){
+        if(comments.get(position).isLiked()){
+            holder.btnLike.setLiked(true);
+        }
+        else {
+            holder.btnLike.setLiked(false);
+        }
     }
 
     public void ClickButtonLike(LikeButton btnLikethumb, final TextView likeNumber, final String idComment, final Context context , final Comment cC){
@@ -130,79 +102,11 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
         btnLikethumb.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                mDataLike.child("Likes").child(mAuth.getCurrentUser().getUid()).child(idComment).push().setValue(idComment);
 
-
-                mDataLike.child("Comments").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Comment comment_contructor = dataSnapshot.getValue(Comment.class);
-                        if(comment_contructor.date.equals(cC.date)&&comment_contructor.userID.equals(cC.userID)){
-
-                            mDataLike.child("Comments").child(dataSnapshot.getKey()).child("like").setValue(comment_contructor.getLikeCount() + 1);
-                            likeNumber.setText(String.valueOf(comment_contructor.getLikeCount() + 1));
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
             }
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                mDataLike.child("Likes").child(mAuth.getCurrentUser().getUid()).child(idComment).removeValue();
-
-
-                mDataLike.child("Comments").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Comment comment_contructor = dataSnapshot.getValue(Comment.class);
-                        if(comment_contructor.date.equals(cC.date)&&comment_contructor.userID.equals(cC.userID)){
-                            likeNumber.setText(String.valueOf(comment_contructor.getLikeCount()-1));
-                            mDataLike.child("Comments").child(dataSnapshot.getKey()).child("like").setValue(comment_contructor.getLikeCount() - 1);
-
-
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
 
 
             }
@@ -212,7 +116,7 @@ public class Comment_Adapter extends RecyclerView.Adapter<Comment_Adapter.ViewHo
 
     @Override
     public int getItemCount() {
-        return comment_contructors.size();
+        return comments.size();
     }
 
 

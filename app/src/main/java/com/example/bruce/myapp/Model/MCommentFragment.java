@@ -1,26 +1,19 @@
 package com.example.bruce.myapp.Model;
 
-import android.util.Log;
-
-import com.example.bruce.myapp.Adapter.Comment_Adapter;
-import com.example.bruce.myapp.Data.Comment;
-import com.example.bruce.myapp.Data.UserProfile;
+import com.example.bruce.myapp.ApiClient;
+import com.example.bruce.myapp.ApiGetObject.GetAllCommentOfLocation;
+import com.example.bruce.myapp.ApiInterface;
 import com.example.bruce.myapp.Presenter.CommentFragment.ICommentFragment;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
 /**
  * Created by BRUCE on 11/29/2017.
  */
 
 public class MCommentFragment {
-    DatabaseReference mData;
 
     ICommentFragment callback;
 
@@ -28,80 +21,42 @@ public class MCommentFragment {
         this.callback = callback;
     }
 
-    public void handleGetDataComment(int location_ID, Comment_Adapter adapter,ArrayList<Comment> comments){
+    public void handleGetAllCommentOfLocation(String locationId, String userGetCommentId, String commentId){
+        Retrofit retrofit = ApiClient.getApiClient();
 
-        mData = FirebaseDatabase.getInstance().getReference();
-        mData.child("Comments").addChildEventListener(new ChildEventListener() {
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.getAllCommentOfLocation(locationId, userGetCommentId, commentId).enqueue(new Callback<GetAllCommentOfLocation>() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                final Comment comment_contructor = dataSnapshot.getValue(Comment.class);
-                comment_contructor.commentImages = new ArrayList<>();
-                if(location_ID == comment_contructor.locationID) {
+            public void onResponse(Call<GetAllCommentOfLocation> call, retrofit2.Response<GetAllCommentOfLocation> response) {
+                if(response.isSuccessful()){
+                    //on mode get all
+                    if(commentId == null){
+                        callback.getAllCommentOfLocation(
+                                response.body().getResultCode(),
+                                response.body().getResultData(),
+                                "");
+                    }
+                    //on mode get new
+                    else {
+                        callback.getNewCommentOfLocation(
+                                response.body().getResultCode(),
+                                response.body().getResultData(),
+                                "");
+                    }
 
-                    mData.child("Img_Comment").child(dataSnapshot.getKey()).addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            comment_contructor.commentImages.add(dataSnapshot.getValue().toString());
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
-                    mData.child("User").child(comment_contructor.userID).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            UserProfile constructer_userProfile=dataSnapshot.getValue(UserProfile.class);
-                            comment_contructor.userImage=constructer_userProfile.Image;
-                            comments.add(comment_contructor);
-                            adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
                 }
-
+                else{
+                    //only on mode get all
+                    if(commentId == null) {
+                        callback.getAllCommentOfLocation(99, null, "Không thể kết nối với máy chủ");
+                    }
+                }
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onFailure(Call<GetAllCommentOfLocation> call, Throwable t) {
+                callback.getAllCommentOfLocation(99, null,"Không thể kết nối với máy chủ");
             }
         });
     }

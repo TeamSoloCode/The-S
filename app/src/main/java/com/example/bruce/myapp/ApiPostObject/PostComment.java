@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class PostComment {
     private String comment;
     private ArrayList<String> listImage;
+
     public PostComment() {
     }
 

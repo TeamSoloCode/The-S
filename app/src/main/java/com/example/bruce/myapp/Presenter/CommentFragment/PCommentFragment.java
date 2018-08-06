@@ -1,6 +1,5 @@
 package com.example.bruce.myapp.Presenter.CommentFragment;
 
-import com.example.bruce.myapp.Adapter.Comment_Adapter;
 import com.example.bruce.myapp.Data.Comment;
 import com.example.bruce.myapp.Model.MCommentFragment;
 import com.example.bruce.myapp.View.Comment_Fragment.IViewComment_Fragment;
@@ -20,10 +19,18 @@ public class PCommentFragment implements ICommentFragment {
         this.callbackToView = callbackToView;
     }
 
-    public void receivedGetDataComment(int location_ID, Comment_Adapter adapter, ArrayList<Comment> comments){
-
-        model.handleGetDataComment(location_ID,adapter,comments);
+    public void receivedGetDataComment(String locationId, String userGetCommentId, String commentId){
+        model.handleGetAllCommentOfLocation(locationId, userGetCommentId, commentId);
     }
 
 
+    @Override
+    public void getAllCommentOfLocation(int resultCode, ArrayList<Comment> comments, String resultMessage) {
+        callbackToView.getAllCommentOfLocation(resultCode, comments, resultMessage);
+    }
+
+    @Override
+    public void getNewCommentOfLocation(int resultCode, ArrayList<Comment> comments, String resultMessage) {
+        callbackToView.getNewCommentOfLocation(resultCode, comments, resultMessage);
+    }
 }

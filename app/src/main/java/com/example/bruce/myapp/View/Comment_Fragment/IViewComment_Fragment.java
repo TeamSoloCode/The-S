@@ -9,4 +9,6 @@ import java.util.ArrayList;
  */
 
 public interface IViewComment_Fragment {
+    void getAllCommentOfLocation(int resultCode, ArrayList<Comment> comments, String resultMessage);
+    void getNewCommentOfLocation(int resultCode, ArrayList<Comment> comments, String resultMessage);
 }

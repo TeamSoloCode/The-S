@@ -44,10 +44,8 @@ public class Information_Fragment extends android.support.v4.app.Fragment implem
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         tls = getActivity().getIntent().getParcelableArrayListExtra("tourist_location");
         pInformationFragment.receivedGetTouristLocationById(tls.get(0).getLocationId());
-
     }
 
     private void initialize(View mView){

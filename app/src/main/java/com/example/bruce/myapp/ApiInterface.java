@@ -2,6 +2,7 @@ package com.example.bruce.myapp;
 
 import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
 import com.example.bruce.myapp.ApiGetObject.GetAllCheckPoint;
+import com.example.bruce.myapp.ApiGetObject.GetAllCommentOfLocation;
 import com.example.bruce.myapp.ApiGetObject.GetAllMyDiaries;
 import com.example.bruce.myapp.ApiGetObject.GetAllTeamMember;
 import com.example.bruce.myapp.ApiGetObject.GetAllTouristLocation;
@@ -65,6 +66,19 @@ public interface ApiInterface {
                                     @Field("userId") String userId,
                                     @Field("comment") String comment);
 
+
+    /**
+     * Lấy hết comment của cái location
+     * @param locationId
+     * @param userIdGetComment
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("GetAllCommentOfLocation")
+    Call<GetAllCommentOfLocation> getAllCommentOfLocation(@Field("locationId") String locationId,
+                                                          @Field("userIdGetComment") String userIdGetComment,
+                                                          @Field("commentId") String commentId);
 
     //------Team
 
@@ -226,6 +240,6 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("Ping")
     Call<CommonResponse> sendPing(@Field("userId") String userId,
-                                    @Field("teamId") String teamId,
-                                    @Field("pingCode") int pingCode);
+                                  @Field("teamId") String teamId,
+                                  @Field("pingCode") int pingCode);
 }

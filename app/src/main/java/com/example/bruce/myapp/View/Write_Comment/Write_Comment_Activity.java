@@ -12,131 +12,163 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.Comment_Image_Adapter;
-import com.example.bruce.myapp.Data.Comment;
-import com.example.bruce.myapp.Data.Tourist_Location;
+import com.example.bruce.myapp.ApiClient;
+import com.example.bruce.myapp.ApiCommonResponse.CommonResponse;
+import com.example.bruce.myapp.ApiInterface;
+import com.example.bruce.myapp.ApiPostObject.PostComment;
+import com.example.bruce.myapp.Data.TouristLocation;
 import com.example.bruce.myapp.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.UUID;
 
-public class Write_Comment_Activity extends AppCompatActivity {
+import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
 
-    EditText edtComment;
-    ImageButton btnPost,btnPostImage;
-    RecyclerView recyclerView;
+public class Write_Comment_Activity extends AppCompatActivity implements View.OnClickListener {
 
-    Comment_Image_Adapter adapterImage;
-    Comment myComment;
-    DatabaseReference mData;
-    DatabaseReference Comment;
-    FirebaseAuth firebaseAuth;
-    int PICK_IMAGE_MULTIPLE = 1;
-    ArrayList<String> imagesPost;
-    ArrayList<Uri> mArrayUri;
+    private EditText edtComment;
+    private ImageButton btnPost,btnPostImage;
+    private RecyclerView recyclerView;
 
-    Uri filepath;
+    private Comment_Image_Adapter adapterImage;
+    private PostComment myComment;
+    private DatabaseReference mData;
+    private DatabaseReference Comment;
+    private FirebaseUser user;
+    private int PICK_IMAGE_MULTIPLE = 1;
+    private ArrayList<String> imagesPost;
+    private ArrayList<Uri> mArrayUri;
+    private ArrayList<TouristLocation> tls;
+
+    private Uri filepath;
     private StorageReference mStorageRef;
     private FirebaseStorage storage;
-    String key;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_comment);
+
+        mData = FirebaseDatabase.getInstance().getReference();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
         storage= FirebaseStorage.getInstance();
-        mStorageRef=storage.getReference();
+        mStorageRef = storage.getReference();
 
         initialize();
+        getDataFromIntent();
+
         imagesPost = new ArrayList<>();
 
         recyclerView.setVisibility(View.GONE);
 
-        mData = FirebaseDatabase.getInstance().getReference();
 
-        firebaseAuth= FirebaseAuth.getInstance();
 
+        setUpRecyclerViewPostImage();
+
+        addImage(btnPostImage);
+    }
+
+    private void initialize(){
+        edtComment = (EditText) findViewById(R.id.edtComment);
+        btnPost = (ImageButton) findViewById(R.id.btnPost);
+        recyclerView = (RecyclerView) findViewById(R.id.listImagePost);
+
+        btnPostImage = (ImageButton) findViewById(R.id.btnPostImage);
+        btnPost.setOnClickListener(this);
+    }
+
+    private void getDataFromIntent(){
+        tls = getIntent().getParcelableArrayListExtra("tourist_location");
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.btnPost:
+                myComment = new PostComment();
+                if(edtComment.length() != 0){
+                    myComment.setComment(edtComment.getText().toString());
+                    myComment.setListImage(imagesPost);
+                }
+
+                //chuyển object lại thành json
+                Gson gson = new Gson();
+                String jsonComment = gson.toJson(myComment);
+
+                //goi api
+                Retrofit retrofit = ApiClient.getApiClient();
+
+                ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+                apiInterface.postComment(tls.get(0).getLocationId(),user.getUid(), jsonComment).enqueue(new Callback<CommonResponse>() {
+                    @Override
+                    public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                        if(response.isSuccessful()){
+                            if(response.body().getResultCode() == 2){
+                                Toasty.success(getApplicationContext(), response.body().getResultMessage().toString() , Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toasty.error(getApplicationContext(), response.body().getResultMessage().toString() , Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                        else{
+                            Toasty.error(getApplicationContext(), "Can not connect to server" , Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CommonResponse> call, Throwable t) {
+                        Toasty.error(getApplicationContext(), "Can not connect to server" , Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                //upload();
+                finish();
+                break;
+        }
+    }
+
+    private void setUpRecyclerViewPostImage(){
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false);
         recyclerView.setLayoutManager(layoutManager);
-        adapterImage=new Comment_Image_Adapter(getApplicationContext(),imagesPost);
-
+        adapterImage = new Comment_Image_Adapter(getApplicationContext(),imagesPost);
         recyclerView.setAdapter(adapterImage);
-        addImage(btnPostImage);
-        Post(btnPost,edtComment);
-
-
-    }
-
-    private void Post(ImageButton btnPost, final EditText edtComment){
-        ArrayList<Tourist_Location> tls;
-        tls = getIntent().getParcelableArrayListExtra("tourist_location");
-
-        btnPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(edtComment.length() == 0){
-
-                }
-
-                else{
-                    myComment = new Comment();
-                    myComment.userID = firebaseAuth.getCurrentUser().getUid();
-                    myComment.locationID = tls.get(0).location_ID;
-                    myComment.comment = edtComment.getText().toString();
-
-                    //lấy ngày hệ thống đổi ra kiểu String
-                    Date today = new Date(System.currentTimeMillis());
-                    SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss dd/MM/yyyy");
-                    String date = timeFormat.format(today.getTime());
-                    myComment.date = date;
-
-                    myComment.userName = firebaseAuth.getCurrentUser().getDisplayName();
-
-                    key = mData.child("Comments").push().getKey();
-                    myComment.commentID=key;
-                    Comment   = mData.child("Comments").child(key);
-                    Comment.setValue(myComment);
-
-                    Log.d("sad",key);
-                    upload();
-                    //onBackPressed();
-                    finish();
-                }
-            }
-        });
     }
 
     private void upload() {
         if(filepath!=null) {
 
-               for(int i=0;i<mArrayUri.size();i++){
-                   Uri fipath=mArrayUri.get(i);
+               for(int i = 0; i < mArrayUri.size(); i++){
+                   Uri fipath = mArrayUri.get(i);
                    final StorageReference ref = mStorageRef.child("image/" + UUID.randomUUID().toString());
                    ref.putFile(fipath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                        @Override
                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                           //Log.v("successtoast",taskSnapshot.getDownloadUrl().toString());
 
-                           //mData.child("Img_Comment").child(key).push().setValue(taskSnapshot.getDownloadUrl().toString());
                        }
                    }).addOnFailureListener(new OnFailureListener() {
                        @Override
@@ -239,17 +271,9 @@ public class Write_Comment_Activity extends AppCompatActivity {
         recyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void initialize(){
-        edtComment = (EditText) findViewById(R.id.edtComment);
-        btnPost = (ImageButton) findViewById(R.id.btnPost);
-        recyclerView = (RecyclerView) findViewById(R.id.listImagePost);
-        btnPostImage = (ImageButton) findViewById(R.id.btnPostImage);
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
     }
-
 
 }

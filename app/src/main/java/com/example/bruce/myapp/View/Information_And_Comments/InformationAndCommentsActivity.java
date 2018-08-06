@@ -39,11 +39,11 @@ import com.example.bruce.myapp.View.Information_Fragment.Information_Fragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
 import com.hsalf.smilerating.SmileRating;
 
 import java.io.ByteArrayOutputStream;
@@ -72,6 +72,7 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
     Uri filepath;
     private StorageReference mStorageRef;
     private FirebaseStorage storage;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     Dialog dialogComment;
     ArrayList<Uri> mArrayUri;
@@ -88,16 +89,24 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_information_and_comments);
 
         initialize();
+        getDataFromIntent();
 
         setupTitle(txtTitle);
         setupViewPager(mViewPage);
         setupTabLayout(tabLayout, mViewPage);
-        tls = new ArrayList<>();
+
         imagePost = new ArrayList<>();
+
+        setDialogRate(btnRate, InformationAndCommentsActivity.this);
+
+        onClickFabComment();
+    }
+
+    private void getDataFromIntent(){
+        tls = getIntent().getParcelableArrayListExtra("tourist_location");
+
         //set up rating bar
         ratingBar.setRating(tls.get(0).getStars());
-        setDialogRate(btnRate, InformationAndCommentsActivity.this);
-        onClickFabComment();
     }
 
     /**
@@ -140,20 +149,47 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
                 btnComent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        tls = getIntent().getParcelableArrayListExtra("tourist_location");
-                        if (edtComment.length() == 0) {
-                            Toast.makeText(InformationAndCommentsActivity.this, "qwe", Toast.LENGTH_SHORT).show();
-                        } else {
-                            DatabaseReference mData;
-                            DatabaseReference Comment;
-                            FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-                            mData = FirebaseDatabase.getInstance().getReference();
-
-                            PostComment myComment = new PostComment();
+                        PostComment myComment = new PostComment();
+                        if(edtComment.length() != 0){
                             myComment.setComment(edtComment.getText().toString());
-
-                            Toast.makeText(InformationAndCommentsActivity.this, "asd", Toast.LENGTH_SHORT).show();
+                            //set hinh cho comment
+                            //myComment.setListImage(imagesPost);
                         }
+
+                        //chuyển object lại thành json
+                        Gson gson = new Gson();
+                        String jsonComment = gson.toJson(myComment);
+
+                        //goi api
+                        Retrofit retrofit = ApiClient.getApiClient();
+
+                        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+                        apiInterface.postComment(tls.get(0).getLocationId(),user.getUid(), jsonComment).enqueue(new Callback<CommonResponse>() {
+                            @Override
+                            public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
+                                if(response.isSuccessful()){
+                                    if(response.body().getResultCode() == 2){
+                                        Toasty.success(getApplicationContext(), response.body().getResultMessage().toString() , Toast.LENGTH_SHORT).show();
+                                    }
+                                    else{
+                                        Toasty.error(getApplicationContext(), response.body().getResultMessage().toString() , Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+                                else{
+                                    Toasty.error(getApplicationContext(), "Can not connect to server" , Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CommonResponse> call, Throwable t) {
+                                Toasty.error(getApplicationContext(), "Can not connect to server" , Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        //upload();
+                        finish();
                     }
                 });
 
@@ -373,7 +409,7 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         postUsersRate(tls.get(0).getLocationId(),
-                                FirebaseAuth.getInstance().getCurrentUser().getUid().toString(), costRate, dialog);
+                                user.getUid(), costRate, dialog);
                     }
                 });
 
@@ -414,7 +450,5 @@ public class InformationAndCommentsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        Toast.makeText(this, "resume", Toast.LENGTH_SHORT).show();
     }
 }

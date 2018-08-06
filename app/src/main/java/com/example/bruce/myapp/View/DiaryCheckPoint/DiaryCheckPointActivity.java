@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,6 +78,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         imagesPost = new ArrayList<>();
 
         initialize();
+
         getDataFromIntent();
         if(mode.equals("add")){
             btnSaveChanges.setText("Add check point");
@@ -90,7 +92,6 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
         btnAddImage.setOnClickListener(this);
         user = FirebaseAuth.getInstance().getCurrentUser();
         gpsTracker = new GPSTracker(this);
-
         setupSpinner(spnCheckPointKind);
     }
 
@@ -146,7 +147,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        
+
     }
 
     @Override
