@@ -14,7 +14,7 @@ public class Comment {
     private long addedDate;
     private int like;
     private boolean liked;
-    public ArrayList<String> image;
+    private ArrayList<String> image;
 
     public Comment() {
 

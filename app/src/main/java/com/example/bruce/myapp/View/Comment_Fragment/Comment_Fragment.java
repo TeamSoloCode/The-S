@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.bruce.myapp.Adapter.Comment_Adapter;
 import com.example.bruce.myapp.Data.Comment;
@@ -23,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by BRUCE on 8/31/2017.
@@ -69,6 +72,14 @@ public class Comment_Fragment extends android.support.v4.app.Fragment implements
 
     @Override
     public void getAllCommentOfLocation(int resultCode, ArrayList<Comment> comments, String resultMessage) {
+        if(resultCode != 1){
+            Toasty.error(getContext(), resultMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if(comments == null){
+            return;
+        }
+
         this.comments = comments;
         hsmComment = new HashMap<>();
 
@@ -99,7 +110,6 @@ public class Comment_Fragment extends android.support.v4.app.Fragment implements
 
         //hashmap này để kiểm tra đã hiện thị comment này hay chưa
         hsmComment.put(comments.get(0).getCommentId(), true);
-
         adaper.notifyDataSetChanged();
     }
 
@@ -145,6 +155,8 @@ public class Comment_Fragment extends android.support.v4.app.Fragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mData.removeEventListener(childEventListenerNewCommentAdded);
+        if(childEventListenerNewCommentAdded != null){
+            mData.removeEventListener(childEventListenerNewCommentAdded);
+        }
     }
 }
