@@ -24,7 +24,7 @@
                 android:id="@+id/imgAddCheckPoint"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/listtourist"/>
+                android:background="@drawable/add_diary"/>
         </android.support.v7.widget.CardView>
 
     </FrameLayout>
