@@ -327,9 +327,11 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
             intent.putParcelableArrayListExtra("checkpoint", passData);
             intent.putExtra("diaryId", diaryId);
             intent.putExtra("mode","update");
+
             if(shareMode.equals("share")){
                 intent.putExtra("shareMode","share");
             }
+
             startActivity(intent);
             finish();
         });
