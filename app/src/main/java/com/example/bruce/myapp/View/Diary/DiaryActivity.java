@@ -12,7 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.bruce.myapp.Data.CheckPoint;
@@ -23,10 +24,12 @@ import com.example.bruce.myapp.GPSTracker;
 import com.example.bruce.myapp.Presenter.Diary.PDiary;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.DiaryCheckPoint.DiaryCheckPointActivity;
+import com.example.bruce.myapp.View.MyDiary.MyDiaryActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -54,7 +57,9 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
 
     //firebase
     private FirebaseUser user;
-    ImageView imgAddCheckPoint;
+    private ImageButton imgAddCheckPoint;
+    private ImageButton imgShareDiary;
+
     //direction
     private List<Marker> originMarkers;
     private List<Marker> destinationMarkers;
@@ -62,6 +67,7 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
     private List<Circle> circle = new ArrayList<>();
 
     private String diaryId;
+    private String shareMode;
     private PDiary pDiary;
     private GPSTracker gpsTracker;
 
@@ -78,16 +84,29 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        initialize();
+
         user = FirebaseAuth.getInstance().getCurrentUser();
         diaryId = getIntent().getStringExtra("diaryId");
+        shareMode = getIntent().getStringExtra("shareMode");
         pDiary = new PDiary(this);
+        hashMapCheckPoint = new HashMap<>();
 
+        if(shareMode != null){
+            if(shareMode.equals("share")){
+                //goi api lay check point dc chia se
+                pDiary.receivedGetAllMySharedCheckPoint(user.getUid(), diaryId);
+                imgAddCheckPoint.setVisibility(View.GONE);
+                imgShareDiary.setVisibility(View.GONE);
+            }
+        }
+        else{
+            //goi api lấy tất cả check point của user về
+            pDiary.receivedGetAllCheckPoint(user.getUid(), diaryId);
+        }
 
-        //goi api lấy tất cả check point của user về
-        pDiary.receivedGetAllCheckPoint(user.getUid(), diaryId);
-
-        initialize();
         imgAddCheckPoint.setOnClickListener(this);
+        imgShareDiary.setOnClickListener(this);
     }
 
 
@@ -137,6 +156,7 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
 
     private void initialize(){
         imgAddCheckPoint = findViewById(R.id.imgAddCheckPoint);
+        imgShareDiary = findViewById(R.id.imgShareDiary);
     }
 
     private void drawDiaryPolylineOnMap(ArrayList<LatLng> listLatLng){
@@ -159,6 +179,9 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
+        if(listCheckPoint == null){
+            return;
+        }
 
         ArrayList<LatLng> listLatLng = new ArrayList<>();
         hashMapCheckPoint = new HashMap<>();
@@ -169,19 +192,110 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
 
             LatLng checkPointLocation = new LatLng(checkPoint.getLat(), checkPoint.getLog());
             listLatLng.add(checkPointLocation);
-            mMap.addMarker(new MarkerOptions().position(checkPointLocation)
-                    .title(checkPoint.getDescription()).icon(null)).setTag(checkPoint.getId());
+
+            switch (checkPoint.getKind()){
+                case 0:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(null))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 2:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 3:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 4:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 5:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)))
+                            .setTag(checkPoint.getId());
+                    break;
+            }
+
         }
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(listLatLng.get(0), 14));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(listLatLng.get(listCheckPoint.size() - 1), 14));
         //drawDiaryPolylineOnMap(listLatLng);
+        this.listCheckPoint = listCheckPoint;
+    }
+
+    @Override
+    public void getAllMySharedCheckPoint(int resultCode, ArrayList<CheckPoint> listCheckPoint, String resultMessage) {
+        if(resultCode != 1){
+            Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Ẩn 2 nut add với save đi vì ng dc chia sẽ chi dc xem
+        imgShareDiary.setVisibility(View.GONE);
+        imgAddCheckPoint.setVisibility(View.GONE);
+
+        ArrayList<LatLng> listLatLng = new ArrayList<>();
+        hashMapCheckPoint.clear();
+
+        for(CheckPoint checkPoint : listCheckPoint){
+
+            hashMapCheckPoint.put(checkPoint.getId(), checkPoint);
+
+            LatLng checkPointLocation = new LatLng(checkPoint.getLat(), checkPoint.getLog());
+            listLatLng.add(checkPointLocation);
+
+            switch (checkPoint.getKind()){
+                case 0:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(null))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 2:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 3:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 4:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
+                            .setTag(checkPoint.getId());
+                    break;
+                case 5:
+                    mMap.addMarker(new MarkerOptions().position(checkPointLocation)
+                            .title(checkPoint.getDescription())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)))
+                            .setTag(checkPoint.getId());
+                    break;
+            }
+
+        }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(listLatLng.get(listCheckPoint.size() - 1), 14));
+        //drawDiaryPolylineOnMap(listLatLng);
+        this.listCheckPoint.clear();
         this.listCheckPoint = listCheckPoint;
     }
 
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-
-        Intent intent = new Intent(this, DiaryCheckPointActivity.class);
 
         final Dialog info = new Dialog(this);
 
@@ -192,8 +306,8 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
         Button btnDirection = info.findViewById(R.id.btnDirection);
         Button btnInformation = info.findViewById(R.id.btnInformation);
 
-        btnDirection.setText("Direction");
-        btnInformation.setText("Edit this check point");
+        btnDirection.setText("Direction to this point");
+        btnInformation.setText("Edit this point");
 
         btnDirection.setOnClickListener(v -> {
             info.dismiss();
@@ -207,12 +321,15 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
 
         btnInformation.setOnClickListener(v ->{
             info.dismiss();
-
+            Intent intent = new Intent(this, DiaryCheckPointActivity.class);
             ArrayList<CheckPoint> passData = new ArrayList<>();
             passData.add(hashMapCheckPoint.get(marker.getTag()));
             intent.putParcelableArrayListExtra("checkpoint", passData);
             intent.putExtra("diaryId", diaryId);
             intent.putExtra("mode","update");
+            if(shareMode.equals("share")){
+                intent.putExtra("shareMode","share");
+            }
             startActivity(intent);
             finish();
         });
@@ -228,7 +345,40 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
                 startActivity(intent);
                 finish();
                 break;
+            case R.id.imgShareDiary:
+                final Dialog info = new Dialog(this);
+
+                //info.requestWindowFeature(Window.FEATURE_NO_TITLE); -- bo title cua dialog
+                info.setContentView(R.layout.dialog_shared_diary);
+                info.show();
+
+                Button btnShare = info.findViewById(R.id.btnShare);
+                EditText edtEmailShared = info.findViewById(R.id.edtEmailShared);
+
+                btnShare.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        info.dismiss();
+                        if(edtEmailShared.length() <= 0){
+                            Toasty.info(getApplicationContext(), "Please enter the email will be share !!!").show();
+                            return;
+                        }
+                        pDiary.receivedSharedDiary(user.getUid(), diaryId, edtEmailShared.getText().toString());
+                    }
+                });
+
+                break;
         }
+    }
+
+    @Override
+    public void sharedDiary(int resultCode, String resultMessage) {
+        if(resultCode != 2){
+            Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
     }
 
     //ham tim duong
@@ -312,6 +462,8 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Intent intent = new Intent(this, MyDiaryActivity.class);
+        startActivity(intent);
         finish();
     }
 

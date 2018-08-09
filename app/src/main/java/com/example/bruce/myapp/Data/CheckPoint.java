@@ -19,6 +19,7 @@ public class CheckPoint implements Parcelable {
     private String description;
     private long createDate;
     private boolean deleteFlag;
+    private int kind;
 
     public CheckPoint() {}
 
@@ -29,6 +30,7 @@ public class CheckPoint implements Parcelable {
         images = in.createStringArrayList();
         description = in.readString();
         createDate = in.readLong();
+        kind = in.readInt();
     }
 
     public static final Creator<CheckPoint> CREATOR = new Creator<CheckPoint>() {
@@ -56,6 +58,15 @@ public class CheckPoint implements Parcelable {
         dest.writeStringList(images);
         dest.writeString(description);
         dest.writeLong(createDate);
+        dest.writeInt(kind);
+    }
+
+    public int getKind() {
+        return kind;
+    }
+
+    public void setKind(int kind) {
+        this.kind = kind;
     }
 
     public LatLng toPosition(){
@@ -117,4 +128,5 @@ public class CheckPoint implements Parcelable {
     public void setCreateDate(long createDate) {
         this.createDate = createDate;
     }
+
 }

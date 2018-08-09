@@ -35,4 +35,14 @@ public class PMyDiary implements IMyDiary {
     public void createNewDiary(int resultCode, String resultMessage) {
         callbackToView.createNewDiary(resultCode, resultMessage);
     }
+
+    public void receivedGetMySharedDiary(String userIdShared){
+        mDiary.getAllMyDiaryShared(userIdShared);
+    }
+
+    @Override
+    public void getAllMySharedDiary(int resultCode, ArrayList<Diary> listDiary, String resultMessage) {
+        callbackToView.getAllMySharedDiary(resultCode, listDiary, resultMessage);
+    }
+
 }

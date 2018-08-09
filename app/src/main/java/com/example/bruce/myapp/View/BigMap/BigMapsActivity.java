@@ -84,14 +84,12 @@ import java.util.concurrent.ExecutionException;
 import es.dmoral.toasty.Toasty;
 
 public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnMapReadyCallback,DirectionFinderListener,
-        MenumapAdapter.RecyclerViewClicklistener,GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener, IViewTeam{
+        MenumapAdapter.RecyclerViewClicklistener,GoogleMap.OnInfoWindowClickListener, IViewTeam{
     //googleMaps
     private GoogleMap mMap;
     private boolean count = false;
     GPSTracker gps;
     private LatLng mLocation;
-    private HashMap<String, TouristLocation> hashMapTouristLocation;
-
     //direction
     //lấy tọa độ gps để tìm đường từ mình đến địa điểm du lịch
     private String origin;
@@ -102,7 +100,6 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
 
     private TextView txtToogle;
     private DrawerLayout drawer;
-
     //model
     private MBigMap modelBigMap = new MBigMap();
     private PBigMap pBigMap = new PBigMap(this);
@@ -332,7 +329,6 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
 
         pTeam.receivedGetAllTeamMember(user.getUid(), teamId);
 
-        mMap.setOnMarkerClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
     }
 
@@ -383,6 +379,8 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         }
 
         markAllLocation(listTouristLocation,mMap,recyclerView_ListLocation,adapter,mLocation);
+        //set up bottom sheet(thông tin cơ bản khi click vào marker)
+        setupBottomSheet(mMap,listTouristLocation);
         return null;
     }
 
@@ -395,13 +393,13 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
      * @param adapter
      * @param mLocation
      */
+    HashMap<String, TouristLocation> hashMap = new HashMap<>();
     private void markAllLocation(ArrayList<TouristLocation> tourist_locations, GoogleMap mMap,RecyclerView recyclerView_ListLocation, MenumapAdapter adapter, LatLng mLocation)
     {
         for(TouristLocation tl : tourist_locations){
             final  LatLng latLgData = new LatLng(tl.getLat(),tl.getLog());
             tl.setDistance(modelBigMap.Radius(mLocation,latLgData));
-            hashMapTouristLocation.put(tl.getLocationId(), tl);
-
+            hashMap.put(tl.getLocationId(), tl);
             mMap.addMarker(new MarkerOptions()
                     .position(latLgData)
                     .title(tl.getName())
@@ -422,15 +420,19 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         }
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
+    private void setupBottomSheet(GoogleMap mMap, ArrayList<TouristLocation> tourist_locations){
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
 
-        return false;
+                return false;
+            }
+        });
     }
-
 
     @Override
     public void onInfoWindowClick(Marker marker) {
+
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(BigMapsActivity.this);
         View parentView =  getLayoutInflater().inflate(R.layout.item_bottom_sheet,null);
         bottomSheetDialog.setContentView(parentView);
@@ -444,16 +446,22 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
         Button btnDirection = parentView.findViewById(R.id.btnSheet_Direction);
         Button btnInformation = parentView.findViewById(R.id.btnSheet_Information);
 
-        TouristLocation tl = hashMapTouristLocation.get(marker.getTag());
 
-        if(tl.getLocationId().equals(marker.getTag())){
+        StringBuilder origin = new StringBuilder();
+        StringBuilder destination = new StringBuilder();
+        origin.append(mLocation.latitude+", "+mLocation.longitude);
+        destination.append(marker.getPosition().latitude+ ", "+marker.getPosition().longitude);
+
+        TouristLocation tl = hashMap.get(marker.getTag());
+
+        if(tl != null){
             Picasso.with(BigMapsActivity.this).load(tl.getImage()).into(img_BtmSheet);
             txt_BtmSheet.setText(tl.getBasicInfo());
             txt_BtmSheet_LocationName.setText(tl.getName());
             rB_BtmSheet_Star.setRating(tl.getStars());
             bottomSheetDialog.show();
 
-            btnInformation.setOnClickListener(v ->{
+            btnInformation.setOnClickListener(v -> {
                 bottomSheetDialog.dismiss();
                 //lưu lại lịch sử xem của user
                 //pBigMap.receivedSaveHistoryAndBehavior(tl.location_ID,tl.getKindOfLocation(), FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -461,16 +469,14 @@ public class BigMapsActivity extends FragmentActivity implements IViewBigMap,OnM
                 ArrayList<TouristLocation> tls = new ArrayList<>();
                 tls.add(tl);
                 Intent infor = new Intent(BigMapsActivity.this, InformationAndCommentsActivity.class);
-                infor.putParcelableArrayListExtra("tourist_location",tls);
+                infor.putParcelableArrayListExtra("tourist_location", tls);
                 startActivity(infor);
             });
         }
-
-
-        StringBuilder origin = new StringBuilder();
-        StringBuilder destination = new StringBuilder();
-        origin.append(mLocation.latitude+", "+mLocation.longitude);
-        destination.append(marker.getPosition().latitude+ ", "+marker.getPosition().longitude);
+        else{
+            sendRequest(origin.toString(),destination.toString());
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(),14));
+        }
 
         btnDirection.setOnClickListener(v ->{
             bottomSheetDialog.dismiss();

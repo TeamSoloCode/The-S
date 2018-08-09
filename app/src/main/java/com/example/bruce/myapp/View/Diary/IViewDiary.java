@@ -10,4 +10,6 @@ import java.util.ArrayList;
 
 public interface IViewDiary {
     void getAllCheckPoint(int resultCode, ArrayList<CheckPoint> listCheckPoint, String resultMessage);
+    void getAllMySharedCheckPoint(int resultCode, ArrayList<CheckPoint> listCheckPoint, String resultMessage);
+    void sharedDiary(int resultCode, String resultMessage);
 }

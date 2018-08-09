@@ -26,4 +26,20 @@ public class PDiary implements IDiary {
     public void getAllCheckPoint(int resultCode, ArrayList<CheckPoint> listCheckPoint, String resultMessage) {
         callbackToView.getAllCheckPoint(resultCode, listCheckPoint, resultMessage);
     }
+
+    public void receivedGetAllMySharedCheckPoint(String userId, String diaryId){
+        model.getAllMySharedCheckPoint(userId, diaryId);
+    }
+    @Override
+    public void getAllMySharedCheckPoint(int resultCode, ArrayList<CheckPoint> listCheckPoint, String resultMessage) {
+        callbackToView.getAllMySharedCheckPoint(resultCode, listCheckPoint, resultMessage);
+    }
+
+    public void receivedSharedDiary(String userId, String diaryId, String userSharedEmail){
+        model.shareMyDiary(userId, diaryId, userSharedEmail);
+    }
+    @Override
+    public void sharedDiary(int resultCode, String resultMessage) {
+        callbackToView.sharedDiary(resultCode,resultMessage);
+    }
 }

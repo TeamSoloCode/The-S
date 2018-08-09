@@ -8,17 +8,16 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,32 +27,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.bruce.myapp.Adapter.AddMissingLocationAdapter;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import es.dmoral.toasty.Toasty;
 
@@ -88,16 +68,16 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
                 selectImage();
             }
         });
-        storage= FirebaseStorage.getInstance();
-        mStorageRef=storage.getReference();
-        arrImg=new ArrayList<>();
+        storage = FirebaseStorage.getInstance();
+        mStorageRef = storage.getReference();
+        arrImg = new ArrayList<>();
         checkError();
         rvAddImg = findViewById(R.id.rvAddMissingLocation);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false);
         rvAddImg.setLayoutManager(layoutManager);
-        imagesPost=new ArrayList<>();
-        imageUri=new ArrayList<>();
-        adapterImage=new AddMissingLocationAdapter(getApplicationContext(),imagesPost);
+        imagesPost = new ArrayList<>();
+        imageUri = new ArrayList<>();
+        adapterImage = new AddMissingLocationAdapter(getApplicationContext(),imagesPost);
         adapterImage.setClickListener(this);
     }
 
@@ -115,7 +95,7 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (edtPlaceName.getText().toString().length() <= 0) {
+                if (edtPlaceName.length() <= 0) {
                     edtPlaceName.setError(getString(R.string.MessageNameNull));
                     checkname=false;
                 } else {
@@ -320,7 +300,7 @@ public class AddMissingLocation extends AppCompatActivity implements AddMissingL
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(checkname==true && checkAdress==true && checkCategory==true)
+        if(checkname && checkAdress && checkCategory)
         {
             menu.getItem(0).setEnabled(true);
         }

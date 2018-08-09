@@ -72,15 +72,16 @@ public class Comment_Fragment extends android.support.v4.app.Fragment implements
 
     @Override
     public void getAllCommentOfLocation(int resultCode, ArrayList<Comment> comments, String resultMessage) {
+        this.comments = comments;
         if(resultCode != 1){
             Toasty.error(getContext(), resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
-        else if(comments == null){
+
+        if(this.comments == null){
             return;
         }
 
-        this.comments = comments;
         hsmComment = new HashMap<>();
 
         //hashmap này để kiểm tra đã hiện thị comment này hay chưa

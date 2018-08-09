@@ -80,4 +80,37 @@ public class MMyDiary {
             }
         });
     }
+
+    /**
+     * Get all my shared diaries
+     * @param userIdShared
+     */
+    public void getAllMyDiaryShared(String userIdShared){
+        Retrofit retrofit = ApiClient.getApiClient();
+
+        ApiInterface apiInterface = retrofit.create(ApiInterface.class);
+
+        apiInterface.getAllMyDiaryShared(userIdShared).enqueue(new Callback<GetAllMyDiaries>() {
+            @Override
+            public void onResponse(Call<GetAllMyDiaries> call, retrofit2.Response<GetAllMyDiaries> response) {
+                if(response.isSuccessful()){
+                    callback.getAllMySharedDiary(response.body().getResultCode(),
+                            response.body().getResultData(),
+                            "");
+                }
+                else{
+                    callback.getAllMySharedDiary(99,
+                            null,
+                            "Không thể kết nối với máy chủ");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetAllMyDiaries> call, Throwable t) {
+                callback.getAllMySharedDiary(99,
+                        null,
+                        "Không thể kết nối với máy chủ");
+            }
+        });
+    }
 }

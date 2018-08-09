@@ -61,6 +61,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
     private String diaryId;
     private CheckPoint checkPoint;
     private String mode;
+    private String shareMode;
     private GPSTracker gpsTracker;
 
     private String userChoosenTask;
@@ -106,11 +107,21 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
     private void getDataFromIntent(){
         diaryId = getIntent().getStringExtra("diaryId");
         mode = getIntent().getStringExtra("mode");
+        shareMode = getIntent().getStringExtra("shareMode");
+
+        if(shareMode != null){
+            if(shareMode.equals("share")){
+                btnSaveChanges.setVisibility(View.GONE);
+                btnAddImage.setVisibility(View.GONE);
+            }
+        }
         ArrayList<CheckPoint> passData = getIntent().getParcelableArrayListExtra("checkpoint");
         if(passData != null){
             checkPoint = passData.get(0);
+            spnCheckPointKind.setSelection(checkPoint.getKind());
             edtDiscription.setText(checkPoint.getDescription());
-        }else{
+        }
+        else{
             checkPoint = new CheckPoint();
             checkPoint.setImages(new ArrayList<>());
             renderData(checkPoint);
@@ -142,12 +153,12 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toasty.info(this, position + "", Toast.LENGTH_SHORT).show();
+        checkPoint.setKind(position);
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        checkPoint.setKind(0);
     }
 
     @Override
@@ -174,7 +185,7 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
                     upload();
                 }
                 else if(mode.equals("update")){
-                    if(edtDiscription.length() == 0){
+                    if(edtDiscription.length() <= 0){
                         Toasty.info(DiaryCheckPointActivity.this,"Discription can not be empty", Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -321,8 +332,24 @@ public class DiaryCheckPointActivity extends AppCompatActivity implements View.O
     }
 
     private void upload() {
-        if(imageUri!=null) {
+        if(imageUri != null) {
             storageRef = storage.getReference();
+
+            if(imageUri.size() == 0){
+                if(mode.equals("update")){
+                    pDiaryCheckPoint.receivedUpdateCheckPoint(
+                            user.getUid(),
+                            diaryId,
+                            checkPoint);
+                }
+                else if(mode.equals("add")){
+                    pDiaryCheckPoint.receivedAddNewCheckPoint(
+                            user.getUid(),
+                            diaryId,
+                            checkPoint);
+                }
+            }
+
             for(Uri filePath : imageUri){
                 count++;
                 Uri fipath = filePath;

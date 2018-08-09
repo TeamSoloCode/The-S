@@ -15,10 +15,18 @@ public class Diary {
     private float distance;
     private int checkPoint;
     private int deleteFlag;
+    private String sharedBy;
 
     public Diary() {
     }
 
+    public String getSharedBy() {
+        return sharedBy;
+    }
+
+    public void setSharedBy(String sharedBy) {
+        this.sharedBy = sharedBy;
+    }
 
     public void setName(String name) {
         this.name = name;

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +35,8 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     private RelativeLayout relativeLayoutNotification, relativeLayoutLoading;
     private Button btnAddNewDiary;
     private SpotsDialog loadDaTaDialog;
+    private ArrayList<Diary> listDiary;
+    private String shareMode;
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     @Override
@@ -73,32 +74,57 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     public void onClickItemRecyclerView(View view, Diary diary) {
         Intent intent = new Intent(this,DiaryActivity.class);
         intent.putExtra("diaryId", diary.getId());
+        intent.putExtra("shareMode", shareMode);
         startActivity(intent);
         finish();
     }
 
     @Override
     public void getAllMyDiary(int resultCode, ArrayList<Diary> listMyDiary, String resultMessage) {
+        this.listDiary = listMyDiary;
+
         loadDaTaDialog.dismiss();
         if(resultCode != 1){
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if(listMyDiary.size() != 0){
+        if(this.listDiary.size() != 0){
             relativeLayoutLoading.setVisibility(View.GONE);
 
             recyclerViewMyDiaries.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-            diaryAdapter = new DiaryAdapter(listMyDiary, this);
+            diaryAdapter = new DiaryAdapter(this.listDiary, this);
             recyclerViewMyDiaries.setAdapter(diaryAdapter);
             diaryAdapter.setClickListenerRecyclerView(this);
             diaryAdapter.notifyDataSetChanged();
+
         }else{
             relativeLayoutNotification.setVisibility(View.VISIBLE);
         }
+    }
 
+    @Override
+    public void getAllMySharedDiary(int resultCode, ArrayList<Diary> listDiary, String resultMessage) {
+        loadDaTaDialog.dismiss();
+        this.listDiary = listDiary;
+        if(resultCode != 1){
+            Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        Log.i("asdf", listMyDiary.toString());
+        if(listDiary.size() == 0) {
+            Toasty.info(this, "You don't have any shared diary", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(this.listDiary.size() != 0) {
+            recyclerViewMyDiaries.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            diaryAdapter = new DiaryAdapter(this.listDiary, this);
+            recyclerViewMyDiaries.setAdapter(diaryAdapter);
+            diaryAdapter.setClickListenerRecyclerView(this);
+            diaryAdapter.notifyDataSetChanged();
+
+        }
     }
 
     @Override
@@ -108,6 +134,9 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
             return;
         }
         Toasty.success(this, resultMessage, Toast.LENGTH_SHORT).show();
+
+        //get all user's diary
+        pDiary.receivedGetAllMyDiary(user.getUid());
     }
 
     @Override
@@ -119,10 +148,20 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
         switch (item.getItemId()){
             case R.id.btnMnAddNewDiary:
                 pDiary.receivedCreateDiary(user.getUid());
+                break;
+            case R.id.btnMnAllSharedDiary:
+                loadDaTaDialog.show();
+                shareMode = "share";
+                pDiary.receivedGetMySharedDiary(user.getUid());
+                break;
+            case R.id.btnMnAllMyDiary:
+                loadDaTaDialog.show();
+                shareMode = null;
+                //get all user's diary
+                pDiary.receivedGetAllMyDiary(user.getUid());
                 break;
         }
         return super.onOptionsItemSelected(item);

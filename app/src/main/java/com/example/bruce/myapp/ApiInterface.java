@@ -223,7 +223,6 @@ public interface ApiInterface {
                                                 @Field("diaryId") String diaryId,
                                                 @Field("data") String data);
 
-
     /**
      * Get all users checkpoint
      * @param userId
@@ -235,6 +234,44 @@ public interface ApiInterface {
     @POST("GetAllCheckPoint")
     Call<GetAllCheckPoint> getAllCheckPoint(@Field("userId") String userId,
                                             @Field("diaryId") String diaryId);
+
+    /**
+     *
+     * @param userSharedId
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("GetAllMySharedDiary")
+    Call<GetAllMyDiaries> getAllMyDiaryShared(@Field("userSharedId") String userSharedId);
+
+    /**
+     * Share my diary
+     * @param userId
+     * @param diaryId
+     * @param userSharedEmail
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("ShareMyDiary")
+    Call<CommonResponse> sharedMyDiary(@Field("userId") String userId,
+                                       @Field("diaryId") String diaryId,
+                                       @Field("userSharedEmail") String userSharedEmail);
+
+    /**
+     * GetAllMySharedDiarysCheckPoint
+     * @param diaryId
+     * @param userSharedId
+     * @return
+     */
+    @Headers("Content-Type: application/x-www-form-urlencoded")
+    @FormUrlEncoded
+    @POST("GetAllMySharedDiarysCheckPoint")
+    Call<GetAllCheckPoint> getAllMySharedDiarysCheckPoint(
+                                @Field("userSharedId") String userSharedId,
+                               @Field("diaryId") String diaryId);
+
     //------SOS
     @Headers("Content-Type: application/x-www-form-urlencoded")
     @FormUrlEncoded

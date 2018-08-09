@@ -10,5 +10,6 @@ import java.util.ArrayList;
 
 public interface IViewMyDiary {
     void getAllMyDiary(int resultCode, ArrayList<Diary> listTeamMember, String resultMessage);
+    void getAllMySharedDiary(int resultCode, ArrayList<Diary> listDiary, String resultMessage);
     void createNewDiary(int resultCode, String resultMessage);
 }
