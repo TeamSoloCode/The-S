@@ -216,7 +216,7 @@ public class LoginActivity extends AppCompatActivity implements IViewLogin,Googl
 
         finish();
         Intent target = new Intent(LoginActivity.this, HistoryAndHobbyActivity.class);
-        target.putExtra("hobby",userProfile.Hobbie);
+        //target.putExtra("hobby",userProfile.Hobbie);
         Toasty.success(this,"Login facebook successed",Toast.LENGTH_SHORT).show();
         startActivity(target);
 

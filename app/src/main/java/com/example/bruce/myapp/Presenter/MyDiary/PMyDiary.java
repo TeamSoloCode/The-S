@@ -27,8 +27,8 @@ public class PMyDiary implements IMyDiary {
         callbackToView.getAllMyDiary(resultCode, listMyDiary, resultMessage);
     }
 
-    public void receivedCreateDiary(String userId){
-        mDiary.createDiary(userId);
+    public void receivedCreateDiary(String userId, String diaryName, String diaryImage){
+        mDiary.createDiary(userId,diaryName,diaryImage);
     }
 
     @Override

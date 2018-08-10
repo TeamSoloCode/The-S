@@ -24,7 +24,6 @@ import com.example.bruce.myapp.GPSTracker;
 import com.example.bruce.myapp.Presenter.Diary.PDiary;
 import com.example.bruce.myapp.R;
 import com.example.bruce.myapp.View.DiaryCheckPoint.DiaryCheckPointActivity;
-import com.example.bruce.myapp.View.MyDiary.MyDiaryActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -307,7 +306,12 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
         Button btnInformation = info.findViewById(R.id.btnInformation);
 
         btnDirection.setText("Direction to this point");
-        btnInformation.setText("Edit this point");
+
+        if(shareMode.equals("share")){
+            btnInformation.setText("Show detail");
+        }else{
+            btnInformation.setText("Edit this point");
+        }
 
         btnDirection.setOnClickListener(v -> {
             info.dismiss();
@@ -362,7 +366,7 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
                     public void onClick(View v) {
                         info.dismiss();
                         if(edtEmailShared.length() <= 0){
-                            Toasty.info(getApplicationContext(), "Please enter the email will be share !!!").show();
+                            Toasty.info(getApplicationContext(), "Please enter the email will be shared !!!").show();
                             return;
                         }
                         pDiary.receivedSharedDiary(user.getUid(), diaryId, edtEmailShared.getText().toString());
@@ -464,8 +468,6 @@ public class DiaryActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, MyDiaryActivity.class);
-        startActivity(intent);
         finish();
     }
 

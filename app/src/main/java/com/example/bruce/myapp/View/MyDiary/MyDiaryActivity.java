@@ -1,5 +1,6 @@
 package com.example.bruce.myapp.View.MyDiary;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -65,7 +67,7 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnAddDiary:
-                pDiary.receivedCreateDiary(user.getUid());
+                //pDiary.receivedCreateDiary(user.getUid());
                 break;
         }
     }
@@ -77,6 +79,11 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
         intent.putExtra("shareMode", shareMode);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onLongClickItemRecyclerView(View view, Diary diary) {
+
     }
 
     @Override
@@ -143,6 +150,11 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.diary_menu_item, menu);
+        if(shareMode != null){
+            if(shareMode.equals("share")){
+                menu.findItem(0).setVisible(false);
+            }
+        }
         return true;
     }
 
@@ -150,7 +162,30 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.btnMnAddNewDiary:
-                pDiary.receivedCreateDiary(user.getUid());
+                final Dialog info = new Dialog(this);
+
+                //info.requestWindowFeature(Window.FEATURE_NO_TITLE); -- bo title cua dialog
+                info.setContentView(R.layout.dialog_diary_profile);
+                info.show();
+
+                Button btnMainImage = info.findViewById(R.id.btnAddDiaryImage);
+                Button btnAddnewDiary = info.findViewById(R.id.btnAddNewDiary);
+                EditText edtDiarysname = info.findViewById(R.id.edtDiarysName);
+
+                //để cái uri của image trong cái biến này
+                String mainImage = "";
+
+                btnMainImage.setOnClickListener(v -> {
+                    info.dismiss();
+                    //code add hinh
+
+                });
+
+                btnAddnewDiary.setOnClickListener(v ->{
+                    loadDaTaDialog.show();
+                    pDiary.receivedCreateDiary(user.getUid(), edtDiarysname.toString(), mainImage);
+                });
+
                 break;
             case R.id.btnMnAllSharedDiary:
                 loadDaTaDialog.show();

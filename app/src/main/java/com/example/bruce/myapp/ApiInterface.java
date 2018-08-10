@@ -183,7 +183,9 @@ public interface ApiInterface {
     @Headers("Content-Type: application/x-www-form-urlencoded")
     @FormUrlEncoded
     @POST("CreateDiary")
-    Call<CommonResponse> createNewDiary(@Field("userId") String userId);
+    Call<CommonResponse> createNewDiary(@Field("userId") String userId,
+                                        @Field("diarysName") String diarysName,
+                                        @Field("diarysImage") String diarysImage);
 
     /**
      * Get all my diary

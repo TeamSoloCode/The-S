@@ -25,12 +25,12 @@ public class MMyDiary {
      * Create new diary
      * @param userId
      */
-    public void createDiary(String userId){
+    public void createDiary(String userId, String diaryName, String diaryImage){
         Retrofit retrofit = ApiClient.getApiClient();
 
         ApiInterface apiInterface = retrofit.create(ApiInterface.class);
 
-        apiInterface.createNewDiary(userId).enqueue(new Callback<CommonResponse>() {
+        apiInterface.createNewDiary(userId, diaryName, diaryImage).enqueue(new Callback<CommonResponse>() {
             @Override
             public void onResponse(Call<CommonResponse> call, retrofit2.Response<CommonResponse> response) {
                 if(response.isSuccessful()){

@@ -69,7 +69,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         return diaries.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         ImageView imgMainImage;
         TextView txtDiarysName, txtDiscription, txtCreatedDate, txtCheckPoint, txtSharedBy;
         ProgressBar progressBar;
@@ -102,13 +102,22 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
                 clicklistener.onClickItemRecyclerView(v,diaries.get(getPosition()));
             }
         }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if(clicklistener != null){
+                clicklistener.onLongClickItemRecyclerView(v,diaries.get(getPosition()));
+            }
+            return false;
+        }
     }
+
     public void setClickListenerRecyclerView(RecyclerViewClicklistener clickListener){
         this.clicklistener = clickListener;
     }
 
     public interface RecyclerViewClicklistener{
-
         void onClickItemRecyclerView(View view, Diary diary);
+        void onLongClickItemRecyclerView(View view, Diary diary);
     }
 }
