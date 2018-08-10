@@ -35,10 +35,13 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     private DiaryAdapter diaryAdapter;
     private PMyDiary pDiary = new PMyDiary(this);
     private RelativeLayout relativeLayoutNotification, relativeLayoutLoading;
-    private Button btnAddNewDiary;
+    private Button btnAddNewDiary, btnMainImage, btnAddnewDiary;
     private SpotsDialog loadDaTaDialog;
     private ArrayList<Diary> listDiary;
     private String shareMode;
+    private EditText edtDiarysname;
+    private Dialog info;
+
 
     private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     @Override
@@ -54,6 +57,8 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
 
         //get all user's diary
         pDiary.receivedGetAllMyDiary(user.getUid());
+
+
     }
 
     private void initialize(){
@@ -67,9 +72,61 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnAddDiary:
-                //pDiary.receivedCreateDiary(user.getUid());
+                info = setUpDialogCreateNewDiary();
+                info.show();
+                break;
+            case R.id.btnAddDiaryImage:
+                //up hình xong lấy hình trên firebase xuông chổ này;
+                //đưa zo biên mainImage xong
+                break;
+
+            case R.id.btnAddNewDiary:
+                if(edtDiarysname.length() != 0){
+                    if(info != null && info.isShowing()){
+                        info.dismiss();
+                    }
+                    //để hình zo đây
+                    String mainImage = "";
+                    loadDaTaDialog.show();
+                    pDiary.receivedCreateDiary(user.getUid(), edtDiarysname.getText().toString(), mainImage);
+                }
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.btnMnAddNewDiary:
+                info = setUpDialogCreateNewDiary();
+                info.show();
+                break;
+            case R.id.btnMnAllSharedDiary:
+                loadDaTaDialog.show();
+                shareMode = "share";
+                pDiary.receivedGetMySharedDiary(user.getUid());
+                break;
+            case R.id.btnMnAllMyDiary:
+                loadDaTaDialog.show();
+                shareMode = null;
+                //get all user's diary
+                pDiary.receivedGetAllMyDiary(user.getUid());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private Dialog setUpDialogCreateNewDiary(){
+        final Dialog info = new Dialog(this);
+        //info.requestWindowFeature(Window.FEATURE_NO_TITLE); -- bo title cua dialog
+        info.setContentView(R.layout.dialog_diary_profile);
+        btnMainImage = info.findViewById(R.id.btnAddDiaryImage);
+        btnAddnewDiary = info.findViewById(R.id.btnAddNewDiary);
+        edtDiarysname = info.findViewById(R.id.edtDiarysName);
+
+        btnAddnewDiary.setOnClickListener(this);
+        btnMainImage.setOnClickListener(this);
+        return info;
     }
 
     @Override
@@ -96,6 +153,10 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
             return;
         }
 
+        if(listMyDiary == null){
+            return;
+        }
+
         if(this.listDiary.size() != 0){
             relativeLayoutLoading.setVisibility(View.GONE);
 
@@ -116,6 +177,10 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
         this.listDiary = listDiary;
         if(resultCode != 1){
             Toasty.error(this, resultMessage, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(listDiary == null){
             return;
         }
 
@@ -158,47 +223,5 @@ public class MyDiaryActivity extends AppCompatActivity implements DiaryAdapter.R
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.btnMnAddNewDiary:
-                final Dialog info = new Dialog(this);
 
-                //info.requestWindowFeature(Window.FEATURE_NO_TITLE); -- bo title cua dialog
-                info.setContentView(R.layout.dialog_diary_profile);
-                info.show();
-
-                Button btnMainImage = info.findViewById(R.id.btnAddDiaryImage);
-                Button btnAddnewDiary = info.findViewById(R.id.btnAddNewDiary);
-                EditText edtDiarysname = info.findViewById(R.id.edtDiarysName);
-
-                //để cái uri của image trong cái biến này
-                String mainImage = "";
-
-                btnMainImage.setOnClickListener(v -> {
-                    info.dismiss();
-                    //code add hinh
-
-                });
-
-                btnAddnewDiary.setOnClickListener(v ->{
-                    loadDaTaDialog.show();
-                    pDiary.receivedCreateDiary(user.getUid(), edtDiarysname.toString(), mainImage);
-                });
-
-                break;
-            case R.id.btnMnAllSharedDiary:
-                loadDaTaDialog.show();
-                shareMode = "share";
-                pDiary.receivedGetMySharedDiary(user.getUid());
-                break;
-            case R.id.btnMnAllMyDiary:
-                loadDaTaDialog.show();
-                shareMode = null;
-                //get all user's diary
-                pDiary.receivedGetAllMyDiary(user.getUid());
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
